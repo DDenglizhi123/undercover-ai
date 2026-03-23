@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: undercover_redis
+    ports:
+      - "6379:6379"
+
+  web:
+    build: .
+    container_name: undercover_web
+    command: sh -c "python manage.py migrate --noinput && daphne -b 0.0.0.0 -p 8000 core.asgi:application"
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - redis
+    environment:
+      - PYTHONUNBUFFERED=1
+      # Example of how you could inject the Redis host if your settings.py reads it
+      - REDIS_HOST=redis

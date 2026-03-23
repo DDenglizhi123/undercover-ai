@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Who is the Undercover</title>
+    <style>
+        :root { --bg-color: #1a1a2e; --card-bg: #16213e; --primary-color: #e94560; --text-color: #fff; }
+        body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
+        .game-container { background-color: var(--card-bg); width: 100%; max-width: 400px; height: 100vh; max-height: 800px; border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.8); padding: 20px; box-sizing: border-box; display: flex; flex-direction: column; position: relative; }
+        @media (max-width: 600px) { body { background-color: var(--card-bg); } .game-container { max-width: 100%; max-height: 100%; border-radius: 0; box-shadow: none; padding: 15px; } }
+        h1, h2, h3 { color: var(--primary-color); text-align: center; margin-top: 0;}
+        .screen { display: flex; flex-direction: column; height: 100%; }
+        .hidden { display: none !important; }
+        .fade-in { animation: fadeIn 0.4s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        
+        input[type="text"] { width: 100%; padding: 12px; margin: 5px 0; border-radius: 12px; border: 2px solid #0f3460; background-color: #1a1a2e; color: white; outline: none; box-sizing: border-box; }
+        button { background-color: var(--primary-color); color: white; border: none; padding: 12px; border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer; width: 100%; margin: 5px 0; transition: transform 0.1s; }
+        button:active { transform: scale(0.95); }
+        button:disabled { background-color: #555; cursor: not-allowed; transform: none; }
+        
+        .player-list { list-style: none; padding: 0; overflow-y: auto; flex-grow: 1; }
+        .player-list li { background-color: rgba(255,255,255,0.05); margin: 8px 0; padding: 12px; border-radius: 8px; text-align: center;}
+        
+        .role-card { background-color: #0f3460; padding: 30px 20px; border-radius: 15px; text-align: center; border: 2px dashed var(--primary-color); margin-bottom: 20px;}
+        .secret-word { font-size: 30px; font-weight: 900; color: #f9a826; margin-top: 15px; }
+
+        .chat-box { flex-grow: 1; background-color: #1a1a2e; border-radius: 10px; padding: 10px; overflow-y: auto; margin-bottom: 10px; display: flex; flex-direction: column; gap: 8px;}
+        .chat-msg { background-color: #0f3460; padding: 10px; border-radius: 10px; width: fit-content; max-width: 80%; word-wrap: break-word;}
+        .chat-msg.system { background-color: transparent; color: #f9a826; text-align: center; width: 100%; font-size: 14px; }
+        .timer-box { text-align: center; font-size: 20px; font-weight: bold; color: #f9a826; margin-bottom: 5px; }
+        
+        .mini-word-display { text-align: center; font-size: 14px; color: #aaa; margin-bottom: 5px; background: #0f3460; padding: 5px; border-radius: 8px;}
+        .mini-word-display span { color: #f9a826; font-weight: bold; font-size: 16px;}
+        .eliminated-display { text-align: center; font-size: 13px; color: #ff4d4d; margin-bottom: 10px; background: rgba(255, 77, 77, 0.1); padding: 5px; border-radius: 8px; }
+        
+        #btn-record.recording { background-color: #ff3b30; animation: pulse 1s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        .vote-details-box { background-color: #0f3460; border-radius: 10px; padding: 15px; margin: 20px 0; text-align: left; font-size: 14px; line-height: 1.8;}
+    </style>
+</head>
+<body>
+
+    <div class="game-container">
+        <!-- 1. 语言选择界面 (现在是第一步) -->
+        <div id="screen-language" class="screen" style="justify-content: center;">
+            <h1>Language / 语言</h1>
+            <p style="text-align: center; margin-bottom: 30px;">Please select your language<br>请选择游戏语言</p>
+            <button onclick="setLanguage('en')">English</button>
+            <button onclick="setLanguage('zh')" style="background-color: #0f3460;">中文</button>
+        </div>
+
+        <!-- 2. 加入界面 -->
+        <div id="screen-join" class="screen hidden">
+            <h1 data-i18n="gameTitle">Undercover</h1>
+            <input type="text" id="username-input" data-i18n-placeholder="placeholderName" placeholder="Enter nickname" autocomplete="off">
+            <button id="btn-join" data-i18n="joinBtn">Join Room</button>
+        </div>
+
+        <!-- 3. 大厅界面 -->
+        <div id="screen-lobby" class="screen hidden">
+            <h1 data-i18n="lobbyTitle">Lobby</h1>
+            <ul class="player-list" id="players-ul"></ul>
+            <button id="btn-start" data-i18n="startBtn">Start Game</button>
+        </div>
+
+        <!-- 4. 身份界面 -->
+        <div id="screen-game" class="screen hidden">
+            <h1 data-i18n="roleTitle">Your Role</h1>
+            <div class="role-card">
+                <p data-i18n="wordIs">Your word is:</p>
+                <div class="secret-word" id="my-word">???</div>
+            </div>
+            <button id="btn-enter-chat" data-i18n="enterChatBtn">Got it, enter chat</button>
+        </div>
+
+        <!-- 5. 聊天界面 -->
+        <div id="screen-chat" class="screen hidden" style="height: 100%; display: flex; flex-direction: column;">
+            <h3 id="current-speaker-display" style="margin-bottom: 5px;" data-i18n="waitingOrder">Waiting for order...</h3>
+            <div class="timer-box"><span data-i18n="timeLeft">Time left: </span><span id="timer">60</span>s</div>
+            
+            <div class="mini-word-display" id="mini-word-container"><span data-i18n="myWord">My Word: </span><span id="mini-word">???</span></div>
+            <div class="eliminated-display"><span data-i18n="eliminated">Eliminated: </span><span id="eliminated-list">None</span></div>
+            
+            <div class="chat-box" id="chat-log"></div>
+            
+            <div style="display: flex; gap: 5px; margin-bottom: 5px;">
+                <input type="text" id="chat-input" placeholder="Waiting..." disabled style="margin:0; flex-grow: 1;">
+                <button id="btn-send-chat" data-i18n="sendBtn" style="width: 60px; margin:0; padding: 10px;" disabled>Send</button>
+                <button id="btn-record" data-i18n="holdBtn" style="width: 80px; margin:0; padding: 10px;" disabled>Hold</button>
+            </div>
+            <div style="display: flex; gap: 5px;">
+                <button id="btn-end-turn" data-i18n="endTurnBtn" style="background-color: #f9a826; color: #1a1a2e; margin:0; flex: 2;" disabled>End My Turn</button>
+                <button id="btn-propose-restart" data-i18n="proposeRestartBtn" style="background-color: #e94560; margin:0; flex: 1;" class="hidden">Restart</button>
+            </div>
+        </div>
+
+        <!-- 6. 投票界面 -->
+        <div id="screen-vote" class="screen hidden">
+            <h1 data-i18n="voteTitle">Voting Phase</h1>
+            <p style="text-align: center;" data-i18n="voteDesc">Select the suspected player:</p>
+            <div id="vote-buttons-container" style="overflow-y: auto; flex-grow: 1;"></div>
+        </div>
+
+        <!-- 7. 倒计时提示界面 -->
+        <div id="screen-notice" class="screen hidden" style="justify-content: center;">
+            <h1 data-i18n="noticeTitle">System Notice</h1>
+            <p id="notice-msg" style="text-align: center; font-size: 20px; margin-top: 20px; color: #f9a826; font-weight: bold;"></p>
+            <div class="vote-details-box" id="notice-details"></div>
+            <div class="timer-box" style="margin-top: 20px;"><span data-i18n="continuingIn">Continuing in </span><span id="notice-timer">5</span>s...</div>
+        </div>
+
+        <!-- 8. 结果界面 -->
+        <div id="screen-result" class="screen hidden">
+            <h1 id="winner-title" data-i18n="resultTitle">Game Over</h1>
+            <p id="winner-msg" style="text-align: center; color: #f9a826;"></p>
+            <ul class="player-list" id="identities-ul"></ul>
+            <button onclick="location.reload()" data-i18n="backBtn">Back to Lobby</button>
+        </div>
+    </div>
+
+    {{ room_name|json_script:"room-name" }}
+
+    <script>
+        const baseRoomName = JSON.parse(document.getElementById('room-name').textContent);
+        let chatSocket = null; // 延迟初始化 WebSocket
+        
+        let myUsername = "";
+        let turnTimer = null;
+        let isMyTurn = false;
+        let isSpectator = false;
+        window.currentLang = 'en';
+
+        const i18n = {
+            zh: {
+                gameTitle: "谁是卧底", joinBtn: "加入房间", enterNickname: "请输入昵称！", placeholderName: "请输入你的昵称",
+                lobbyTitle: "准备大厅", startBtn: "开始游戏", roleTitle: "你的身份", wordIs: "你的词语是：",
+                enterChatBtn: "我记住了，进入聊天室", waitingOrder: "等待分配发言顺序...", timeLeft: "倒计时: ",
+                myWord: "我的词语：", eliminated: "已淘汰：", sendBtn: "发送", holdBtn: "按住说话",
+                endTurnBtn: "结束发言", voteTitle: "投票环节", voteDesc: "请选择你认为是卧底的玩家：",
+                noticeTitle: "系统提示", continuingIn: "将在 ", resultTitle: "游戏结束", backBtn: "返回大厅",
+                placeholderWait: "等待他人发言...", placeholderSpeak: "请发言...", placeholderSpectate: "旁观中...",
+                voteBtnPrefix: "投给 ", voteSuccess: "投票成功，等待其他人... ⏳",
+                spectatorMsg: "游戏已开始，您已作为【旁观者】加入 👁️", none: "无",
+                voteResultTitle: "【本轮投票结果】 🗳️", votedBy: " 被以下玩家投票：",
+                proposeRestartBtn: "重开", restartProposedMsg: " 发起了重开投票",
+                agreeRestartBtn: "同意重开", restartProgress: "重开投票进度："
+            },
+            en: {
+                gameTitle: "Undercover", joinBtn: "Join Room", enterNickname: "Please enter a nickname!", placeholderName: "Enter nickname",
+                lobbyTitle: "Lobby", startBtn: "Start Game", roleTitle: "Your Role", wordIs: "Your word is:",
+                enterChatBtn: "Got it, enter chat", waitingOrder: "Waiting for order...", timeLeft: "Time left: ",
+                myWord: "My Word: ", eliminated: "Eliminated: ", sendBtn: "Send", holdBtn: "Hold",
+                endTurnBtn: "End My Turn", voteTitle: "Voting Phase", voteDesc: "Select the suspected player:",
+                noticeTitle: "System Notice", continuingIn: "Continuing in ", resultTitle: "Game Over", backBtn: "Back to Lobby",
+                placeholderWait: "Waiting for others...", placeholderSpeak: "Speak now...", placeholderSpectate: "Spectating...",
+                voteBtnPrefix: "Vote for ", voteSuccess: "Vote cast. Waiting for others... ⏳",
+                spectatorMsg: "Game in progress. You are a Spectator 👁️", none: "None",
+                voteResultTitle: "[Voting Results] 🗳️", votedBy: " was voted by: ",
+                proposeRestartBtn: "Restart", restartProposedMsg: " proposed a restart vote",
+                agreeRestartBtn: "Agree to Restart", restartProgress: "Restart voting progress: "
+            }
+        };
+
+        function updateUI() {
+            try {
+                const dict = i18n[window.currentLang];
+                document.querySelectorAll('[data-i18n]').forEach(el => {
+                    const key = el.getAttribute('data-i18n');
+                    if (dict[key]) el.textContent = dict[key];
+                });
+                document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                    const key = el.getAttribute('data-i18n-placeholder');
+                    if (dict[key]) el.placeholder = dict[key];
+                });
+                const chatInput = document.getElementById('chat-input');
+                if(chatInput && chatInput.disabled) {
+                    chatInput.placeholder = isSpectator ? dict.placeholderSpectate : dict.placeholderWait;
+                }
+                const elimList = document.getElementById('eliminated-list');
+                if(elimList && (elimList.textContent === 'None' || elimList.textContent === '无')) {
+                    elimList.textContent = dict.none;
+                }
+            } catch (e) {
+                console.error("Error in updateUI:", e);
+            }
+        }
+
+        // 1. 选择语言
+        function setLanguage(lang) {
+            console.log("Language selected:", lang);
+            window.currentLang = lang;
+            updateUI();
+            showScreen('screen-join');
+        }
+
+        let mediaRecorder;
+        let audioChunks = [];
+
+        window.onload = () => {
+            const savedName = localStorage.getItem('undercover_username');
+            if (savedName) document.getElementById('username-input').value = savedName;
+        };
+
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(el => { el.classList.add('hidden'); el.classList.remove('fade-in'); });
+            const target = document.getElementById(screenId);
+            target.classList.remove('hidden');
+            void target.offsetWidth;
+            target.classList.add('fade-in');
+        }
+
+        function showToast(msg) {
+            const toast = document.createElement('div');
+            toast.textContent = msg;
+            toast.style.cssText = "position:fixed; top:20px; left:50%; transform:translateX(-50%); background-color: var(--primary-color); color:white; padding:12px 24px; border-radius:8px; z-index:9999; box-shadow: 0 4px 12px rgba(0,0,0,0.3); font-weight: bold; transition: opacity 0.3s;";
+            document.body.appendChild(toast);
+            setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 3000);
+        }
+
+        function addSystemMsg(msg) {
+            const log = document.getElementById('chat-log');
+            log.insertAdjacentHTML('beforeend', `<div class="chat-msg system">${msg}</div>`);
+            log.scrollTop = log.scrollHeight;
+        }
+
+        function playTurnSound() {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gainNode = ctx.createGain();
+                osc.type = 'sine'; osc.frequency.setValueAtTime(880, ctx.currentTime); gainNode.gain.setValueAtTime(0.1, ctx.currentTime); 
+                osc.connect(gainNode); gainNode.connect(ctx.destination); osc.start(); osc.stop(ctx.currentTime + 0.2); 
+            } catch(e) {}
+        }
+
+        // 2. 建立 WebSocket 连接并处理消息
+        function connectWebSocket() {
+            // 核心：将语言拼接到房间名后面，实现物理隔离！
+            const wsUrl = 'ws://' + window.location.host + '/ws/chat/' + baseRoomName + '_' + window.currentLang + '/';
+            chatSocket = new WebSocket(wsUrl);
+
+            chatSocket.onopen = () => {
+                chatSocket.send(JSON.stringify({'action': 'join', 'username': myUsername, 'lang': window.currentLang}));
+            };
+
+            chatSocket.onmessage = function(e) {
+                const data = JSON.parse(e.data);
+
+                if (data.action === 'join_error') { 
+                    showToast(data.message); 
+                }
+                else if (data.action === 'join_success') {
+                    localStorage.setItem('undercover_username', myUsername);
+                    isSpectator = data.is_spectator;
+                    
+                    if (isSpectator) {
+                        showToast(i18n[window.currentLang].spectatorMsg);
+                        showScreen('screen-chat');
+                        document.getElementById('mini-word-container').innerHTML = "Spectator Mode 👁️";
+                        disableMyTurn();
+                        if (data.current_speaker) {
+                            document.getElementById('current-speaker-display').textContent = `🎤 ${data.current_speaker}`;
+                        }
+                    } else {
+                        showScreen('screen-lobby');
+                    }
+                }
+                else if (data.action === 'update_players') {
+                    const ul = document.getElementById('players-ul');
+                    ul.innerHTML = data.players.map(name => `<li>${name}</li>`).join('');
+                } 
+                else if (data.action === 'game_started') {
+                    isSpectator = false;
+                    document.getElementById('my-word').textContent = data.word;
+                    document.getElementById('mini-word').textContent = data.word; 
+                    document.getElementById('eliminated-list').textContent = i18n[window.currentLang].none; 
+                    
+                    document.getElementById('btn-propose-restart').classList.remove('hidden');
+                    const existingRestartBtn = document.getElementById('btn-agree-restart');
+                    if (existingRestartBtn) existingRestartBtn.remove();
+                    const existingProgress = document.getElementById('restart-progress');
+                    if (existingProgress) existingProgress.remove();
+                    
+                    showScreen('screen-game'); 
+                    document.getElementById('chat-log').textContent = ''; 
+                }
+                else if (data.action === 'speaker_update') {
+                    showScreen('screen-chat'); 
+                    const speakerName = data.speaker;
+                    document.getElementById('current-speaker-display').textContent = `🎤 ${speakerName}`;
+                    addSystemMsg(`--- 🎤 ${speakerName} ---`);
+                    
+                    clearInterval(turnTimer); let timeLeft = 60; document.getElementById('timer').textContent = timeLeft;
+                    if (speakerName === myUsername && !isSpectator) { enableMyTurn(); } else { disableMyTurn(); }
+
+                    turnTimer = setInterval(() => {
+                        timeLeft--; document.getElementById('timer').textContent = timeLeft;
+                        if (timeLeft <= 0) {
+                            clearInterval(turnTimer);
+                            if (isMyTurn) { chatSocket.send(JSON.stringify({'action': 'end_turn'})); document.getElementById('chat-input').value = ''; disableMyTurn(); }
+                        }
+                    }, 1000);
+                }
+                else if (data.action === 'new_chat_msg') {
+                    const log = document.getElementById('chat-log');
+                    log.insertAdjacentHTML('beforeend', `<div class="chat-msg"><b>${data.sender}:</b> ${data.msg}</div>`);
+                    log.scrollTop = log.scrollHeight;
+                }
+                else if (data.action === 'new_chat_audio') {
+                    const log = document.getElementById('chat-log');
+                    log.insertAdjacentHTML('beforeend', `<div class="chat-msg"><b>${data.sender}:</b><br><audio controls src="${data.audio_data}" style="height: 30px; width: 200px; margin-top: 5px;"></audio></div>`);
+                    log.scrollTop = log.scrollHeight;
+                }
+                else if (data.action === 'start_voting') {
+                    clearInterval(turnTimer);
+                    showScreen('screen-vote');
+                    const container = document.getElementById('vote-buttons-container'); container.innerHTML = '';
+                    
+                    if (isSpectator || !data.alive_players.includes(myUsername)) {
+                        container.innerHTML = `<p style="text-align:center; margin-top:50px; color: #aaa;">${i18n[window.currentLang].placeholderSpectate}</p>`;
+                        return;
+                    }
+
+                    data.alive_players.forEach(name => {
+                        if (name !== myUsername) {
+                            const btn = document.createElement('button');
+                            btn.textContent = `${i18n[window.currentLang].voteBtnPrefix} ${name}`;
+                            btn.onclick = () => {
+                                chatSocket.send(JSON.stringify({'action': 'vote', 'target': name}));
+                                container.innerHTML = `<p style="text-align:center; margin-top:50px;">${i18n[window.currentLang].voteSuccess}</p>`;
+                            };
+                            container.appendChild(btn);
+                        }
+                    });
+                }
+                else if (data.action === 'vote_result') {
+                    clearInterval(turnTimer);
+                    showScreen('screen-notice');
+                    document.getElementById('notice-msg').textContent = data.message;
+                    
+                    // 【需求5】聚合投票结果展示
+                    let detailHtml = `<b>${i18n[window.currentLang].voteResultTitle}</b><br>`;
+                    for (const [target, voters] of Object.entries(data.aggregated_votes)) {
+                        detailHtml += `🎯 <b>${target}</b> ${i18n[window.currentLang].votedBy} ${voters.join(', ')}<br>`;
+                    }
+                    
+                    document.getElementById('notice-details').innerHTML = detailHtml;
+                    addSystemMsg(detailHtml);
+
+                    let timeLeft = 5; document.getElementById('notice-timer').textContent = timeLeft;
+                    turnTimer = setInterval(() => {
+                        timeLeft--; document.getElementById('notice-timer').textContent = timeLeft;
+                        if (timeLeft <= 0) clearInterval(turnTimer);
+                    }, 1000);
+
+                    const elimList = data.eliminated_players.length > 0 ? data.eliminated_players.join(', ') : i18n[window.currentLang].none;
+                    document.getElementById('eliminated-list').textContent = elimList;
+                }
+                else if (data.action === 'game_over') {
+                    clearInterval(turnTimer);
+                    showScreen('screen-result');
+                    document.getElementById('winner-title').textContent = data.winner;
+                    document.getElementById('winner-msg').textContent = data.message;
+                    
+                    const ul = document.getElementById('identities-ul');
+                    ul.innerHTML = Object.entries(data.identities)
+                        .map(([name, info]) => `<li>${name} - ${info.role} (${info.word})</li>`)
+                        .join('');
+                }
+                else if (data.action === 'system_msg') {
+                    addSystemMsg(data.message);
+                }
+                else if (data.action === 'restart_proposed') {
+                    const log = document.getElementById('chat-log');
+                    const msg = `<b>${data.proposer}</b>${i18n[window.currentLang].restartProposedMsg}`;
+                    log.insertAdjacentHTML('beforeend', `<div class="chat-msg system">${msg}</div>`);
+                    
+                    let progressHtml = `<div id="restart-progress" class="chat-msg system">${i18n[window.currentLang].restartProgress}${data.current_votes}/${data.total_needed}</div>`;
+                    let btnHtml = '';
+                    if (!isSpectator && document.getElementById('btn-propose-restart').classList.contains('hidden') === false) {
+                        btnHtml = `<button id="btn-agree-restart" onclick="voteRestart()" style="background-color: #e94560; padding: 5px; font-size: 14px; margin-top: 5px;">${i18n[window.currentLang].agreeRestartBtn}</button>`;
+                    }
+                    log.insertAdjacentHTML('beforeend', progressHtml + btnHtml);
+                    log.scrollTop = log.scrollHeight;
+                }
+                else if (data.action === 'restart_progress') {
+                    const progressEl = document.getElementById('restart-progress');
+                    if (progressEl) {
+                        progressEl.textContent = `${i18n[window.currentLang].restartProgress}${data.current_votes}/${data.total_needed}`;
+                    }
+                }
+            };
+        }
+
+        function voteRestart() {
+            if (chatSocket && chatSocket.readyState === WebSocket.OPEN) {
+                chatSocket.send(JSON.stringify({'action': 'vote_restart'}));
+                const btn = document.getElementById('btn-agree-restart');
+                if (btn) btn.remove(); // Hide after voting
+            }
+        }
+
+        document.getElementById('btn-join').onclick = async () => {
+            myUsername = document.getElementById('username-input').value.trim();
+            if (!myUsername) return showToast(i18n[window.currentLang].enterNickname);
+            
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(stream);
+                mediaRecorder.ondataavailable = e => { if (e.data.size > 0) audioChunks.push(e.data); };
+                mediaRecorder.onstop = () => {
+                    const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                    audioChunks = [];
+                    const reader = new FileReader();
+                    reader.readAsDataURL(audioBlob);
+                    reader.onloadend = () => chatSocket.send(JSON.stringify({'action': 'chat_audio', 'audio_data': reader.result}));
+                };
+            } catch (err) { console.warn("Mic access denied"); }
+
+            // 如果还没连接，建立连接；如果因为重名报错还在当前页，直接发送 join
+            if (!chatSocket || chatSocket.readyState !== WebSocket.OPEN) {
+                connectWebSocket();
+            } else {
+                chatSocket.send(JSON.stringify({'action': 'join', 'username': myUsername, 'lang': window.currentLang}));
+            }
+        };
+
+        document.getElementById('btn-start').onclick = () => chatSocket.send(JSON.stringify({'action': 'start_game'}));
+        document.getElementById('btn-enter-chat').onclick = () => showScreen('screen-chat');
+        document.getElementById('btn-send-chat').onclick = () => {
+            const input = document.getElementById('chat-input');
+            if (input.value.trim() !== "") { chatSocket.send(JSON.stringify({'action': 'chat_msg', 'msg': input.value})); input.value = ''; }
+        };
+        document.getElementById('btn-end-turn').onclick = () => {
+            if (isMyTurn) { chatSocket.send(JSON.stringify({'action': 'end_turn'})); document.getElementById('chat-input').value = ''; disableMyTurn(); }
+        };
+        document.getElementById('btn-propose-restart').onclick = () => {
+            if (!isSpectator) {
+                chatSocket.send(JSON.stringify({'action': 'propose_restart'}));
+                document.getElementById('btn-propose-restart').classList.add('hidden'); // Hide after clicking
+            }
+        };
+
+        const btnRecord = document.getElementById('btn-record');
+        const startRecord = (e) => { e.preventDefault(); if(isMyTurn && mediaRecorder && mediaRecorder.state === 'inactive') { mediaRecorder.start(); btnRecord.classList.add('recording'); btnRecord.textContent = '🎤...'; } };
+        const stopRecord = (e) => { e.preventDefault(); if(isMyTurn && mediaRecorder && mediaRecorder.state === 'recording') { mediaRecorder.stop(); btnRecord.classList.remove('recording'); btnRecord.textContent = i18n[window.currentLang].holdBtn; } };
+        btnRecord.addEventListener('mousedown', startRecord); btnRecord.addEventListener('mouseup', stopRecord); btnRecord.addEventListener('touchstart', startRecord); btnRecord.addEventListener('touchend', stopRecord);
+
+        function enableMyTurn() {
+            if (isSpectator) return;
+            isMyTurn = true;
+            document.getElementById('chat-input').disabled = false; document.getElementById('btn-send-chat').disabled = false; document.getElementById('btn-end-turn').disabled = false;
+            if (mediaRecorder) document.getElementById('btn-record').disabled = false;
+            document.getElementById('chat-input').placeholder = i18n[window.currentLang].placeholderSpeak;
+            playTurnSound(); 
+        }
+
+        function disableMyTurn() {
+            isMyTurn = false;
+            document.getElementById('chat-input').disabled = true; document.getElementById('btn-send-chat').disabled = true; document.getElementById('btn-end-turn').disabled = true; document.getElementById('btn-record').disabled = true;
+            document.getElementById('chat-input').placeholder = isSpectator ? i18n[window.currentLang].placeholderSpectate : i18n[window.currentLang].placeholderWait;
+        }
+    </script>
+</body>
+</html>
