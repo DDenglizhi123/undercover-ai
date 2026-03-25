@@ -29,6 +29,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             ROOMS[self.room_name] = {
                 'players': {},           # channel_name -> username
                 'username_to_channel': {}, # username -> channel_name (optimization)
+                'ready_players': set(),  # channel_names that are in the lobby, ready to play
                 'alive_players': [],      # list of channel_names
                 'words': {},             # channel_name -> {role, word}
                 'votes': {},             # voter_channel -> target_channel
@@ -48,15 +49,16 @@ class ChatConsumer(AsyncWebsocketConsumer):
             if self.channel_name in room_data['players']:
                 username = room_data['players'].pop(self.channel_name)
                 room_data['username_to_channel'].pop(username, None)
+                room_data['ready_players'].discard(self.channel_name)
                 
                 # Cleanup empty room
                 if not room_data['players']:
                     del ROOMS[self.room_name]
                 elif room_data['status'] == 'waiting':
-                    players_list = list(room_data['players'].values())
+                    ready_names = [room_data['players'][ch] for ch in room_data['ready_players'] if ch in room_data['players']]
                     await self.channel_layer.group_send(
                         self.room_group_name,
-                        {'type': 'chat_message', 'data': {'action': 'update_players', 'players': players_list}}
+                        {'type': 'chat_message', 'data': {'action': 'update_players', 'players': ready_names}}
                     )
         await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
 
@@ -82,6 +84,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
             await self.handle_propose_restart()
         elif action == 'vote_restart':
             await self.handle_vote_restart()
+        elif action == 'play_again':
+            await self.handle_play_again()
 
     async def handle_join(self, data):
         room_data = ROOMS[self.room_name]
@@ -110,15 +114,16 @@ class ChatConsumer(AsyncWebsocketConsumer):
         }))
 
         if not is_spectator:
-            players_list = list(room_data['players'].values())
+            room_data['ready_players'].add(self.channel_name)
+            ready_names = [room_data['players'][ch] for ch in room_data['ready_players'] if ch in room_data['players']]
             await self.channel_layer.group_send(
                 self.room_group_name,
-                {'type': 'chat_message', 'data': {'action': 'update_players', 'players': players_list}}
+                {'type': 'chat_message', 'data': {'action': 'update_players', 'players': ready_names}}
             )
 
     async def handle_start_game(self):
         room_data = ROOMS[self.room_name]
-        channel_names = list(room_data['players'].keys())
+        channel_names = [ch for ch in room_data['ready_players'] if ch in room_data['players']]
         lang = room_data['lang']
         
         if len(channel_names) < 3:
@@ -257,6 +262,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 }
             })
             await asyncio.sleep(2) # Brief pause before restarting
+            # Mark all current players as ready for the restart
+            room_data['ready_players'] = set(room_data['players'].keys())
             await self.handle_start_game()
 
     def is_current_speaker(self):
@@ -324,7 +331,18 @@ class ChatConsumer(AsyncWebsocketConsumer):
             }
         })
 
+        # Schedule the next phase as a background task so the receive() handler
+        # can return, allowing the last voter's consumer to process the vote_result.
+        asyncio.create_task(self._delayed_next_phase(is_tie))
+
+    async def _delayed_next_phase(self, is_tie):
         await asyncio.sleep(5)
+
+        room_data = ROOMS.get(self.room_name)
+        if not room_data or room_data['status'] != 'voting':
+            return  # Room deleted or game state changed (e.g. restart)
+
+        lang = room_data['lang']
 
         if not is_tie:
             # Check win conditions
@@ -340,9 +358,22 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         await self.start_speaking_round()
 
+    async def handle_play_again(self):
+        room_data = ROOMS.get(self.room_name)
+        if not room_data or room_data['status'] != 'waiting':
+            return
+        # Mark this player as ready and broadcast the ready player list
+        room_data['ready_players'].add(self.channel_name)
+        ready_names = [room_data['players'][ch] for ch in room_data['ready_players'] if ch in room_data['players']]
+        await self.channel_layer.group_send(
+            self.room_group_name,
+            {'type': 'chat_message', 'data': {'action': 'update_players', 'players': ready_names}}
+        )
+
     async def end_game(self, winner, message):
         room_data = ROOMS[self.room_name]
         room_data['status'] = 'waiting'
+        room_data['ready_players'] = set()  # Reset: players must click "Play Again" to rejoin lobby
         all_identities = {room_data['players'][ch]: info for ch, info in room_data['words'].items()}
         await self.channel_layer.group_send(self.room_group_name, {
             'type': 'chat_message', 

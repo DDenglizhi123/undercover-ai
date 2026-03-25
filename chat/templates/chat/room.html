@@ -116,7 +116,8 @@
             <h1 id="winner-title" data-i18n="resultTitle">Game Over</h1>
             <p id="winner-msg" style="text-align: center; color: #f9a826;"></p>
             <ul class="player-list" id="identities-ul"></ul>
-            <button onclick="location.reload()" data-i18n="backBtn">Back to Lobby</button>
+            <button onclick="playAgain()" data-i18n="playAgainBtn" style="background-color: #f9a826; color: #1a1a2e;">Play Again</button>
+            <button onclick="location.reload()" data-i18n="backBtn" style="background-color: #0f3460;">Back to Lobby</button>
         </div>
     </div>
 
@@ -145,7 +146,8 @@
                 spectatorMsg: "游戏已开始，您已作为【旁观者】加入 👁️", none: "无",
                 voteResultTitle: "【本轮投票结果】 🗳️", votedBy: " 被以下玩家投票：",
                 proposeRestartBtn: "重开", restartProposedMsg: " 发起了重开投票",
-                agreeRestartBtn: "同意重开", restartProgress: "重开投票进度："
+                agreeRestartBtn: "同意重开", restartProgress: "重开投票进度：",
+                playAgainBtn: "再来一局"
             },
             en: {
                 gameTitle: "Undercover", joinBtn: "Join Room", enterNickname: "Please enter a nickname!", placeholderName: "Enter nickname",
@@ -159,7 +161,8 @@
                 spectatorMsg: "Game in progress. You are a Spectator 👁️", none: "None",
                 voteResultTitle: "[Voting Results] 🗳️", votedBy: " was voted by: ",
                 proposeRestartBtn: "Restart", restartProposedMsg: " proposed a restart vote",
-                agreeRestartBtn: "Agree to Restart", restartProgress: "Restart voting progress: "
+                agreeRestartBtn: "Agree to Restart", restartProgress: "Restart voting progress: ",
+                playAgainBtn: "Play Again"
             }
         };
 
@@ -402,24 +405,35 @@
             }
         }
 
-        document.getElementById('btn-join').onclick = async () => {
+        function playAgain() {
+            if (chatSocket && chatSocket.readyState === WebSocket.OPEN) {
+                chatSocket.send(JSON.stringify({'action': 'play_again'}));
+                showScreen('screen-lobby');
+            } else {
+                location.reload();
+            }
+        }
+
+        document.getElementById('btn-join').onclick = () => {
             myUsername = document.getElementById('username-input').value.trim();
             if (!myUsername) return showToast(i18n[window.currentLang].enterNickname);
             
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                mediaRecorder = new MediaRecorder(stream);
-                mediaRecorder.ondataavailable = e => { if (e.data.size > 0) audioChunks.push(e.data); };
-                mediaRecorder.onstop = () => {
-                    const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-                    audioChunks = [];
-                    const reader = new FileReader();
-                    reader.readAsDataURL(audioBlob);
-                    reader.onloadend = () => chatSocket.send(JSON.stringify({'action': 'chat_audio', 'audio_data': reader.result}));
-                };
-            } catch (err) { console.warn("Mic access denied"); }
+            // 请求麦克风权限（非阻塞，不影响加入房间）
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+                    mediaRecorder = new MediaRecorder(stream);
+                    mediaRecorder.ondataavailable = e => { if (e.data.size > 0) audioChunks.push(e.data); };
+                    mediaRecorder.onstop = () => {
+                        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                        audioChunks = [];
+                        const reader = new FileReader();
+                        reader.readAsDataURL(audioBlob);
+                        reader.onloadend = () => chatSocket.send(JSON.stringify({'action': 'chat_audio', 'audio_data': reader.result}));
+                    };
+                }).catch(err => { console.warn("Mic access denied:", err); });
+            }
 
-            // 如果还没连接，建立连接；如果因为重名报错还在当前页，直接发送 join
+            // 立即连接 WebSocket，不等待麦克风权限
             if (!chatSocket || chatSocket.readyState !== WebSocket.OPEN) {
                 connectWebSocket();
             } else {
