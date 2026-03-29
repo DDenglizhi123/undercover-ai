@@ -51,15 +51,70 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 room_data['username_to_channel'].pop(username, None)
                 room_data['ready_players'].discard(self.channel_name)
                 
+                # Remove from alive_players and speaking_order if in game
+                if self.channel_name in room_data['alive_players']:
+                    room_data['alive_players'].remove(self.channel_name)
+                if self.channel_name in room_data['speaking_order']:
+                    room_data['speaking_order'].remove(self.channel_name)
+                if self.channel_name in room_data['votes']:
+                    del room_data['votes'][self.channel_name]
+                if self.channel_name in room_data['restart_votes']:
+                    room_data['restart_votes'].discard(self.channel_name)
+
+                # Notify other players
+                lang = room_data.get('lang', 'zh')
+                leave_msg = f'🚪 【{username}】离开了游戏' if lang == 'zh' else f'🚪 [{username}] left the game'
+                
                 # Cleanup empty room
                 if not room_data['players']:
                     del ROOMS[self.room_name]
-                elif room_data['status'] == 'waiting':
-                    ready_names = [room_data['players'][ch] for ch in room_data['ready_players'] if ch in room_data['players']]
+                else:
                     await self.channel_layer.group_send(
                         self.room_group_name,
-                        {'type': 'chat_message', 'data': {'action': 'update_players', 'players': ready_names}}
+                        {'type': 'chat_message', 'data': {'action': 'system_msg', 'message': leave_msg}}
                     )
+                    
+                    # Handle game state after player left
+                    if room_data['status'] == 'waiting':
+                        ready_names = [room_data['players'][ch] for ch in room_data['ready_players'] if ch in room_data['players']]
+                        await self.channel_layer.group_send(
+                            self.room_group_name,
+                            {'type': 'chat_message', 'data': {'action': 'update_players', 'players': ready_names}}
+                        )
+                    elif room_data['status'] == 'speaking':
+                        # Check if current speaker left
+                        if room_data['speaking_order']:
+                            current_idx = room_data['current_speaker_index']
+                            # Adjust index if needed
+                            if current_idx >= len(room_data['speaking_order']):
+                                # Speaker was at end, move to voting
+                                room_data['status'] = 'voting'
+                                alive_names = [room_data['players'][ch] for ch in room_data['alive_players'] if ch in room_data['players']]
+                                if len(alive_names) >= 2:
+                                    await self.channel_layer.group_send(self.room_group_name, {
+                                        'type': 'chat_message',
+                                        'data': {'action': 'start_voting', 'alive_players': alive_names}
+                                    })
+                                else:
+                                    await self.end_game('🎮 游戏结束' if lang == 'zh' else '🎮 Game Ended', 
+                                                      '玩家不足，游戏结束' if lang == 'zh' else 'Not enough players, game ended')
+                            else:
+                                # Continue with next speaker
+                                await self.broadcast_current_speaker()
+                        elif len(room_data['alive_players']) < 2:
+                            await self.end_game('🎮 游戏结束' if lang == 'zh' else '🎮 Game Ended',
+                                              '玩家不足，游戏结束' if lang == 'zh' else 'Not enough players, game ended')
+                    elif room_data['status'] == 'voting':
+                        # Check if all remaining alive players have voted
+                        alive_still_connected = [ch for ch in room_data['alive_players'] if ch in room_data['players']]
+                        votes_from_alive = {ch: target for ch, target in room_data['votes'].items() if ch in alive_still_connected}
+                        
+                        if len(alive_still_connected) < 2:
+                            await self.end_game('🎮 游戏结束' if lang == 'zh' else '🎮 Game Ended',
+                                              '玩家不足，游戏结束' if lang == 'zh' else 'Not enough players, game ended')
+                        elif len(votes_from_alive) >= len(alive_still_connected):
+                            await self.calculate_votes()
+                        
         await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
 
     async def receive(self, text_data):
@@ -269,9 +324,15 @@ class ChatConsumer(AsyncWebsocketConsumer):
     def is_current_speaker(self):
         room_data = ROOMS.get(self.room_name)
         if not room_data or room_data['status'] != 'speaking': return False
+        if not room_data['speaking_order']: return False
         try:
-            return self.channel_name == room_data['speaking_order'][room_data['current_speaker_index']]
-        except IndexError:
+            idx = room_data['current_speaker_index']
+            if idx >= len(room_data['speaking_order']): return False
+            speaker_ch = room_data['speaking_order'][idx]
+            # Make sure speaker is still connected
+            if speaker_ch not in room_data['players']: return False
+            return self.channel_name == speaker_ch
+        except (IndexError, KeyError):
             return False
 
     async def start_speaking_round(self):
@@ -285,8 +346,27 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     async def broadcast_current_speaker(self):
         room_data = ROOMS[self.room_name]
-        idx = room_data['current_speaker_index']
-        speaker_ch = room_data['speaking_order'][idx]
+        
+        # Skip speakers who have disconnected
+        while room_data['current_speaker_index'] < len(room_data['speaking_order']):
+            speaker_ch = room_data['speaking_order'][room_data['current_speaker_index']]
+            if speaker_ch in room_data['players']:
+                break
+            room_data['current_speaker_index'] += 1
+        
+        # Check if we've gone through all speakers
+        if room_data['current_speaker_index'] >= len(room_data['speaking_order']):
+            # Move to voting phase
+            room_data['status'] = 'voting'
+            alive_names = [room_data['players'][ch] for ch in room_data['alive_players'] if ch in room_data['players']]
+            if len(alive_names) >= 2:
+                await self.channel_layer.group_send(self.room_group_name, {
+                    'type': 'chat_message',
+                    'data': {'action': 'start_voting', 'alive_players': alive_names}
+                })
+            return
+        
+        speaker_ch = room_data['speaking_order'][room_data['current_speaker_index']]
         current_name = room_data['players'][speaker_ch]
         await self.channel_layer.group_send(self.room_group_name, {
             'type': 'chat_message', 
@@ -301,10 +381,14 @@ class ChatConsumer(AsyncWebsocketConsumer):
         vote_counts = {}      # target_channel -> count
         
         for voter_ch, target_ch in room_data['votes'].items():
-            target_name = room_data['players'][target_ch]
-            voter_name = room_data['players'][voter_ch]
-            aggregated_votes.setdefault(target_name, []).append(voter_name)
-            vote_counts[target_ch] = vote_counts.get(target_ch, 0) + 1
+            # Skip votes from disconnected players
+            if voter_ch not in room_data['players']:
+                continue
+            target_name = room_data['players'].get(target_ch)
+            voter_name = room_data['players'].get(voter_ch)
+            if target_name and voter_name:
+                aggregated_votes.setdefault(target_name, []).append(voter_name)
+                vote_counts[target_ch] = vote_counts.get(target_ch, 0) + 1
             
         max_votes = max(vote_counts.values()) if vote_counts else 0
         eliminated_channels = [ch for ch, count in vote_counts.items() if count == max_votes]
@@ -315,8 +399,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
             msg = '⚖️ 出现平票！没有人出局。' if lang == 'zh' else '⚖️ Tie vote! No one is eliminated.'
         else:
             eliminated_channel = eliminated_channels[0]
-            eliminated_name = room_data['players'][eliminated_channel]
-            room_data['alive_players'].remove(eliminated_channel)
+            eliminated_name = room_data['players'].get(eliminated_channel, 'Unknown')
+            if eliminated_channel in room_data['alive_players']:
+                room_data['alive_players'].remove(eliminated_channel)
             msg = f'💀 【{eliminated_name}】被投票出局！' if lang == 'zh' else f'💀 [{eliminated_name}] was voted out!'
 
         all_eliminated_names = [name for ch, name in room_data['players'].items() if ch not in room_data['alive_players']]
@@ -344,10 +429,18 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         lang = room_data['lang']
 
+        # Check if enough players remain
+        if len(room_data['alive_players']) < 2:
+            await self.end_game('🎮 游戏结束' if lang == 'zh' else '🎮 Game Ended',
+                              '玩家不足，游戏结束' if lang == 'zh' else 'Not enough players, game ended')
+            return
+
         if not is_tie:
-            # Check win conditions
-            bad_guys = [ch for ch in room_data['alive_players'] if "Undercover" in room_data['words'][ch]['role'] or "Blank" in room_data['words'][ch]['role']]
-            civilians = [ch for ch in room_data['alive_players'] if "Civilian" in room_data['words'][ch]['role']]
+            # Check win conditions - only count players who still have words assigned
+            bad_guys = [ch for ch in room_data['alive_players'] 
+                       if ch in room_data['words'] and ("Undercover" in room_data['words'][ch]['role'] or "Blank" in room_data['words'][ch]['role'])]
+            civilians = [ch for ch in room_data['alive_players'] 
+                        if ch in room_data['words'] and "Civilian" in room_data['words'][ch]['role']]
             
             if not bad_guys:
                 await self.end_game('👑 Civilians/平民', '👑 平民胜利！所有坏人已出局。' if lang == 'zh' else '👑 Civilians Win! All bad guys eliminated.')

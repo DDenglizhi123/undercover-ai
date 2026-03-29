@@ -38,9 +38,32 @@
         #btn-record.recording { background-color: #ff3b30; animation: pulse 1s infinite; }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
         .vote-details-box { background-color: #0f3460; border-radius: 10px; padding: 15px; margin: 20px 0; text-align: left; font-size: 14px; line-height: 1.8;}
+
+        .help-btn { position: fixed; top: 15px; right: 15px; width: 40px; height: 40px; border-radius: 50%; background-color: var(--primary-color); color: white; border: none; font-size: 20px; font-weight: bold; cursor: pointer; z-index: 100; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 10px rgba(0,0,0,0.3); }
+        .help-btn:active { transform: scale(0.9); }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 200; display: flex; justify-content: center; align-items: center; animation: fadeIn 0.2s ease-out; }
+        .modal-content { background-color: var(--card-bg); width: 90%; max-width: 380px; max-height: 80vh; border-radius: 15px; padding: 20px; overflow-y: auto; position: relative; }
+        .modal-close { position: absolute; top: 10px; right: 15px; background: none; border: none; color: #aaa; font-size: 24px; cursor: pointer; width: auto; padding: 5px; margin: 0; }
+        .modal-close:hover { color: white; }
+        .modal-content h2 { margin-top: 0; margin-bottom: 15px; }
+        .modal-content h3 { color: #f9a826; margin-top: 15px; margin-bottom: 8px; font-size: 16px; }
+        .modal-content p, .modal-content li { font-size: 14px; line-height: 1.6; color: #ddd; margin: 5px 0; }
+        .modal-content ul { padding-left: 20px; }
+        .role-info { background-color: #0f3460; padding: 10px; border-radius: 8px; margin: 8px 0; }
+        .role-info b { color: #f9a826; }
     </style>
 </head>
 <body>
+
+    <button class="help-btn" onclick="toggleHelp()">?</button>
+
+    <div id="help-modal" class="modal-overlay hidden" onclick="if(event.target===this)toggleHelp()">
+        <div class="modal-content">
+            <button class="modal-close" onclick="toggleHelp()">&times;</button>
+            <h2 data-i18n="helpTitle">How to Play</h2>
+            <div id="help-body"></div>
+        </div>
+    </div>
 
     <div class="game-container">
         <!-- 1. 语言选择界面 (现在是第一步) -->
@@ -72,6 +95,8 @@
                 <p data-i18n="wordIs">Your word is:</p>
                 <div class="secret-word" id="my-word">???</div>
             </div>
+            <p id="restart-hint" style="text-align: center; color: #f9a826; font-size: 14px; margin: 10px 0;" data-i18n="checkWordMsg">Check your word, restart if needed</p>
+            <button id="btn-propose-restart" data-i18n="proposeRestartBtn" style="background-color: #e94560;">Restart</button>
             <button id="btn-enter-chat" data-i18n="enterChatBtn">Got it, enter chat</button>
         </div>
 
@@ -91,8 +116,7 @@
                 <button id="btn-record" data-i18n="holdBtn" style="width: 80px; margin:0; padding: 10px;" disabled>Hold</button>
             </div>
             <div style="display: flex; gap: 5px;">
-                <button id="btn-end-turn" data-i18n="endTurnBtn" style="background-color: #f9a826; color: #1a1a2e; margin:0; flex: 2;" disabled>End My Turn</button>
-                <button id="btn-propose-restart" data-i18n="proposeRestartBtn" style="background-color: #e94560; margin:0; flex: 1;" class="hidden">Restart</button>
+                <button id="btn-end-turn" data-i18n="endTurnBtn" style="background-color: #f9a826; color: #1a1a2e; margin:0; flex: 1;" disabled>End My Turn</button>
             </div>
         </div>
 
@@ -147,7 +171,10 @@
                 voteResultTitle: "【本轮投票结果】 🗳️", votedBy: " 被以下玩家投票：",
                 proposeRestartBtn: "重开", restartProposedMsg: " 发起了重开投票",
                 agreeRestartBtn: "同意重开", restartProgress: "重开投票进度：",
-                playAgainBtn: "再来一局"
+                playAgainBtn: "再来一局",
+                restartTimer: "可重开倒计时: ", checkWordMsg: "请确认你的词语，不满意可点重开",
+                helpTitle: "游戏玩法",
+                helpContent: `<h3>🎯 游戏目标</h3><p>找出隐藏在玩家中的卧底！</p><h3>👤 角色说明</h3><div class="role-info"><b>平民：</b>拿到相同词语，通过描述找出卧底</div><div class="role-info"><b>卧底：</b>拿到相似词语，隐藏身份不被发现</div><div class="role-info"><b>白板：</b>没有词语，需要猜测并伪装</div><h3>📋 游戏流程</h3><ul><li>每人轮流描述自己的词语（不能直接说出词语）</li><li>描述结束后进行投票</li><li>得票最多的玩家被淘汰并公布身份</li><li>游戏继续直到找出所有卧底或卧底获胜</ul><h3>🏆 胜利条件</h3><ul><li><b>平民胜利：</b>所有卧底被淘汰</li><li><b>卧底胜利：</b>卧底人数 ≥ 平民人数</li></ul><h3>💡 小技巧</h3><ul><li>描述要模糊但有逻辑</li><li>注意其他玩家的描述是否有漏洞</li><li>白板玩家要仔细听别人描述来猜测词语</li></ul>`
             },
             en: {
                 gameTitle: "Undercover", joinBtn: "Join Room", enterNickname: "Please enter a nickname!", placeholderName: "Enter nickname",
@@ -162,7 +189,10 @@
                 voteResultTitle: "[Voting Results] 🗳️", votedBy: " was voted by: ",
                 proposeRestartBtn: "Restart", restartProposedMsg: " proposed a restart vote",
                 agreeRestartBtn: "Agree to Restart", restartProgress: "Restart voting progress: ",
-                playAgainBtn: "Play Again"
+                playAgainBtn: "Play Again",
+                restartTimer: "Restart available: ", checkWordMsg: "Check your word, restart if needed",
+                helpTitle: "How to Play",
+                helpContent: `<h3>🎯 Objective</h3><p>Find the Undercover agent hiding among players!</p><h3>👤 Roles</h3><div class="role-info"><b>Civilian:</b> Get the same word, find the Undercover through descriptions</div><div class="role-info"><b>Undercover:</b> Get a similar word, hide your identity</div><div class="role-info"><b>Blank:</b> No word, must guess and blend in</div><h3>📋 Game Flow</h3><ul><li>Players take turns describing their word (cannot say the word directly)</li><li>After descriptions, voting begins</li><li>The player with most votes is eliminated and their role revealed</li><li>Game continues until all Undercovers are found or Undercovers win</ul><h3>🏆 Win Conditions</h3><ul><li><b>Civilians Win:</b> All Undercovers are eliminated</li><li><b>Undercovers Win:</b> Number of Undercovers ≥ Civilians</li></ul><h3>💡 Tips</h3><ul><li>Be vague but logical in your descriptions</li><li>Watch for inconsistencies in others' descriptions</li><li>Blank players should listen carefully to guess the word</li></ul>`
             }
         };
 
@@ -185,9 +215,19 @@
                 if(elimList && (elimList.textContent === 'None' || elimList.textContent === '无')) {
                     elimList.textContent = dict.none;
                 }
+                // Update help content
+                const helpBody = document.getElementById('help-body');
+                if (helpBody && dict.helpContent) {
+                    helpBody.innerHTML = dict.helpContent;
+                }
             } catch (e) {
                 console.error("Error in updateUI:", e);
             }
+        }
+
+        function toggleHelp() {
+            const modal = document.getElementById('help-modal');
+            modal.classList.toggle('hidden');
         }
 
         // 1. 选择语言
@@ -280,14 +320,36 @@
                     document.getElementById('mini-word').textContent = data.word; 
                     document.getElementById('eliminated-list').textContent = i18n[window.currentLang].none; 
                     
-                    document.getElementById('btn-propose-restart').classList.remove('hidden');
+                    // Show restart button with countdown
+                    const restartBtn = document.getElementById('btn-propose-restart');
+                    restartBtn.classList.remove('hidden');
+                    restartBtn.disabled = false;
+                    restartBtn.style.backgroundColor = '#e94560';
+                    
                     const existingRestartBtn = document.getElementById('btn-agree-restart');
                     if (existingRestartBtn) existingRestartBtn.remove();
                     const existingProgress = document.getElementById('restart-progress');
                     if (existingProgress) existingProgress.remove();
                     
                     showScreen('screen-game'); 
-                    document.getElementById('chat-log').textContent = ''; 
+                    document.getElementById('chat-log').textContent = '';
+                    
+                    // Start 5-second restart window
+                    let restartCountdown = 5;
+                    const checkWordMsg = i18n[window.currentLang].checkWordMsg;
+                    const restartTimerText = i18n[window.currentLang].restartTimer;
+                    restartBtn.textContent = `${restartTimerText}${restartCountdown}s`;
+                    
+                    const restartTimer = setInterval(() => {
+                        restartCountdown--;
+                        restartBtn.textContent = `${restartTimerText}${restartCountdown}s`;
+                        if (restartCountdown <= 0) {
+                            clearInterval(restartTimer);
+                            restartBtn.disabled = true;
+                            restartBtn.style.backgroundColor = '#555';
+                            restartBtn.textContent = i18n[window.currentLang].proposeRestartBtn + ' (❌)';
+                        }
+                    }, 1000);
                 }
                 else if (data.action === 'speaker_update') {
                     showScreen('screen-chat'); 
@@ -451,9 +513,12 @@
             if (isMyTurn) { chatSocket.send(JSON.stringify({'action': 'end_turn'})); document.getElementById('chat-input').value = ''; disableMyTurn(); }
         };
         document.getElementById('btn-propose-restart').onclick = () => {
-            if (!isSpectator) {
+            const btn = document.getElementById('btn-propose-restart');
+            if (!isSpectator && !btn.disabled) {
                 chatSocket.send(JSON.stringify({'action': 'propose_restart'}));
-                document.getElementById('btn-propose-restart').classList.add('hidden'); // Hide after clicking
+                btn.disabled = true;
+                btn.style.backgroundColor = '#555';
+                btn.textContent = i18n[window.currentLang].restartProposedMsg;
             }
         };
 

@@ -1,0 +1,21 @@
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: undercover_redis
+    restart: unless-stopped
+
+  web:
+    build: .
+    container_name: undercover_web
+    command: sh -c "python manage.py migrate --noinput && daphne -b 0.0.0.0 -p 8000 core.asgi:application"
+    ports:
+      - "80:8000"
+    depends_on:
+      - redis
+    restart: unless-stopped
+    environment:
+      - PYTHONUNBUFFERED=1
+      - REDIS_HOST=redis
+      - DEBUG=False
+      - ALLOWED_HOSTS=localhost,127.0.0.1,YOUR_VPS_IP
+      - SECRET_KEY=pljQ3-ELmgQQrnhN2XFlJ1uJD1Darp9UOP6Pp6rSwIt7wKzcc-uXHwrzs7gdG6kVsHw
