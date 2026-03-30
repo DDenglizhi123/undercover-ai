@@ -6,7 +6,7 @@
 - [ ] Player reconnection support (rejoin game after disconnect)
 - [ ] Room password/privacy settings
 - [ ] Spectator mode improvements
-- [ ] Mobile UI optimization
+- [x] Mobile UI optimization (fixed chat screen button visibility)
 
 ### Medium Priority
 - [ ] More word pairs (expand word database)

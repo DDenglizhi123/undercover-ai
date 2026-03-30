@@ -1,5 +1,26 @@
 # Undercover AI - Dev Log
 
+## Session: 2026-03-30
+
+### Mobile UI Fix
+- Fixed issue where "End My Turn" button was not visible on mobile phones
+- Added `min-height: 0` to `.chat-box` to allow proper flex shrinking
+- Added `overflow: hidden` to `.screen` for proper overflow handling
+- Reduced spacing on timer, mini-word-display, and eliminated-display to be more compact
+- Made bottom buttons always visible on small screens
+- ✅ Verified on mobile (192.168.1.106)
+
+### Game End on Disconnect Fix
+- Changed minimum player threshold from 2 to 3 throughout the codebase
+- When a player disconnects during a 3-player game, the game now ends immediately
+- Added player count check in `handle_end_turn` before starting voting
+- All disconnect handlers now check for `< 3` instead of `< 2`
+- All voting triggers now check for `>= 3` instead of `>= 2`
+
+### Files Modified
+- `chat/consumers.py` - Player count threshold changes
+- `chat/templates/chat/room.html` - CSS and layout adjustments (mobile fix)
+
 ## Session: 2026-03-29
 
 ### Docker & Deployment
@@ -34,48 +55,15 @@
 - After 5 seconds, button becomes disabled (gray)
 - Players can request new words during the window
 
+### Game End on Disconnect Fix
+- Changed minimum player threshold from 2 to 3 throughout the codebase
+- When a player disconnects during a 3-player game, the game now ends immediately
+- Added player count check in `handle_end_turn` before starting voting
+- All disconnect handlers now check for `< 3` instead of `< 2`
+- All voting triggers now check for `>= 3` instead of `>= 2`
+
 ### Files Modified
-- `chat/consumers.py` - Disconnection handling, restart logic
-- `chat/templates/chat/room.html` - Help modal, restart UI
-- `docker-compose.prod.yml` - New production config
+- `chat/consumers.py` - Player count threshold changes
+- `chat/templates/chat/room.html` - CSS and layout adjustments (mobile fix)
 
-### Git Commits
-- `244e301` - feat: add help guide, handle disconnections, improve restart logic
-
-### Deployment Info
-- VPS IP: 159.223.75.154
-- Provider: DigitalOcean
-- Region: Singapore
-- Access: http://159.223.75.154/chat/{room_name}/
-
-## How to Continue Development
-
-### Local Testing
-```bash
-cd /Users/lz/Code/undercover-ai
-docker-compose down
-docker-compose up -d --build
-# Visit http://localhost:8000/chat/test/
-```
-
-### Deploy to VPS
-```bash
-# On Mac
-tar -czf ~/undercover-ai.tar.gz --exclude='venv' --exclude='__pycache__' --exclude='.git' .
-scp ~/undercover-ai.tar.gz root@159.223.75.154:~/
-scp docker-compose.prod.yml root@159.223.75.154:~/docker-compose.yml
-
-# On VPS
-ssh root@159.223.75.154
-cd ~/undercover-ai
-docker-compose down
-tar -xzf ~/undercover-ai.tar.gz
-docker-compose up -d --build
-```
-
-### Commit Changes
-```bash
-git add -A
-git commit -m "feat: description of changes"
-git push
-```
+## Session: 2026-03-29

@@ -90,7 +90,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                                 # Speaker was at end, move to voting
                                 room_data['status'] = 'voting'
                                 alive_names = [room_data['players'][ch] for ch in room_data['alive_players'] if ch in room_data['players']]
-                                if len(alive_names) >= 2:
+                                if len(alive_names) >= 3:
                                     await self.channel_layer.group_send(self.room_group_name, {
                                         'type': 'chat_message',
                                         'data': {'action': 'start_voting', 'alive_players': alive_names}
@@ -101,7 +101,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                             else:
                                 # Continue with next speaker
                                 await self.broadcast_current_speaker()
-                        elif len(room_data['alive_players']) < 2:
+                        elif len(room_data["alive_players"]) < 3:
                             await self.end_game('🎮 游戏结束' if lang == 'zh' else '🎮 Game Ended',
                                               '玩家不足，游戏结束' if lang == 'zh' else 'Not enough players, game ended')
                     elif room_data['status'] == 'voting':
@@ -109,7 +109,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                         alive_still_connected = [ch for ch in room_data['alive_players'] if ch in room_data['players']]
                         votes_from_alive = {ch: target for ch, target in room_data['votes'].items() if ch in alive_still_connected}
                         
-                        if len(alive_still_connected) < 2:
+                        if len(alive_still_connected) < 3:
                             await self.end_game('🎮 游戏结束' if lang == 'zh' else '🎮 Game Ended',
                                               '玩家不足，游戏结束' if lang == 'zh' else 'Not enough players, game ended')
                         elif len(votes_from_alive) >= len(alive_still_connected):
@@ -244,7 +244,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
             room_data['current_speaker_index'] += 1
             if room_data['current_speaker_index'] >= len(room_data['speaking_order']):
                 room_data['status'] = 'voting'
-                alive_names = [room_data['players'][ch] for ch in room_data['alive_players']]
+                alive_names = [room_data["players"][ch] for ch in room_data["alive_players"] if ch in room_data["players"]]
+                if len(alive_names) < 3:
+                    await self.end_game('🎮 游戏结束' if room_data.get("lang") == 'zh' else '🎮 Game Ended','玩家不足，游戏结束' if room_data.get("lang") == 'zh' else 'Not enough players, game ended')
+                    return
                 await self.channel_layer.group_send(self.room_group_name, {
                     'type': 'chat_message', 
                     'data': {'action': 'start_voting', 'alive_players': alive_names}
@@ -359,7 +362,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             # Move to voting phase
             room_data['status'] = 'voting'
             alive_names = [room_data['players'][ch] for ch in room_data['alive_players'] if ch in room_data['players']]
-            if len(alive_names) >= 2:
+            if len(alive_names) >= 3:
                 await self.channel_layer.group_send(self.room_group_name, {
                     'type': 'chat_message',
                     'data': {'action': 'start_voting', 'alive_players': alive_names}
@@ -430,7 +433,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         lang = room_data['lang']
 
         # Check if enough players remain
-        if len(room_data['alive_players']) < 2:
+        if len(room_data["alive_players"]) < 3:
             await self.end_game('🎮 游戏结束' if lang == 'zh' else '🎮 Game Ended',
                               '玩家不足，游戏结束' if lang == 'zh' else 'Not enough players, game ended')
             return

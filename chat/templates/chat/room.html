@@ -10,7 +10,7 @@
         .game-container { background-color: var(--card-bg); width: 100%; max-width: 400px; height: 100vh; max-height: 800px; border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.8); padding: 20px; box-sizing: border-box; display: flex; flex-direction: column; position: relative; }
         @media (max-width: 600px) { body { background-color: var(--card-bg); } .game-container { max-width: 100%; max-height: 100%; border-radius: 0; box-shadow: none; padding: 15px; } }
         h1, h2, h3 { color: var(--primary-color); text-align: center; margin-top: 0;}
-        .screen { display: flex; flex-direction: column; height: 100%; }
+        .screen { display: flex; flex-direction: column; height: 100%; overflow: hidden; }
         .hidden { display: none !important; }
         .fade-in { animation: fadeIn 0.4s ease-out forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
@@ -26,14 +26,14 @@
         .role-card { background-color: #0f3460; padding: 30px 20px; border-radius: 15px; text-align: center; border: 2px dashed var(--primary-color); margin-bottom: 20px;}
         .secret-word { font-size: 30px; font-weight: 900; color: #f9a826; margin-top: 15px; }
 
-        .chat-box { flex-grow: 1; background-color: #1a1a2e; border-radius: 10px; padding: 10px; overflow-y: auto; margin-bottom: 10px; display: flex; flex-direction: column; gap: 8px;}
+        .chat-box { flex-grow: 1; min-height: 0; background-color: #1a1a2e; border-radius: 10px; padding: 10px; overflow-y: auto; margin-bottom: 5px; display: flex; flex-direction: column; gap: 8px;}
         .chat-msg { background-color: #0f3460; padding: 10px; border-radius: 10px; width: fit-content; max-width: 80%; word-wrap: break-word;}
         .chat-msg.system { background-color: transparent; color: #f9a826; text-align: center; width: 100%; font-size: 14px; }
-        .timer-box { text-align: center; font-size: 20px; font-weight: bold; color: #f9a826; margin-bottom: 5px; }
+        .timer-box { text-align: center; font-size: 18px; font-weight: bold; color: #f9a826; margin-bottom: 3px; }
         
-        .mini-word-display { text-align: center; font-size: 14px; color: #aaa; margin-bottom: 5px; background: #0f3460; padding: 5px; border-radius: 8px;}
-        .mini-word-display span { color: #f9a826; font-weight: bold; font-size: 16px;}
-        .eliminated-display { text-align: center; font-size: 13px; color: #ff4d4d; margin-bottom: 10px; background: rgba(255, 77, 77, 0.1); padding: 5px; border-radius: 8px; }
+        .mini-word-display { text-align: center; font-size: 13px; color: #aaa; margin-bottom: 3px; background: #0f3460; padding: 4px; border-radius: 8px;}
+        .mini-word-display span { color: #f9a826; font-weight: bold; font-size: 15px;}
+        .eliminated-display { text-align: center; font-size: 12px; color: #ff4d4d; margin-bottom: 5px; background: rgba(255, 77, 77, 0.1); padding: 4px; border-radius: 8px; }
         
         #btn-record.recording { background-color: #ff3b30; animation: pulse 1s infinite; }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
@@ -102,7 +102,7 @@
 
         <!-- 5. 聊天界面 -->
         <div id="screen-chat" class="screen hidden" style="height: 100%; display: flex; flex-direction: column;">
-            <h3 id="current-speaker-display" style="margin-bottom: 5px;" data-i18n="waitingOrder">Waiting for order...</h3>
+            <h3 id="current-speaker-display" style="margin-bottom: 3px; font-size: 15px;" data-i18n="waitingOrder">Waiting for order...</h3>
             <div class="timer-box"><span data-i18n="timeLeft">Time left: </span><span id="timer">60</span>s</div>
             
             <div class="mini-word-display" id="mini-word-container"><span data-i18n="myWord">My Word: </span><span id="mini-word">???</span></div>
@@ -110,7 +110,7 @@
             
             <div class="chat-box" id="chat-log"></div>
             
-            <div style="display: flex; gap: 5px; margin-bottom: 5px;">
+            <div style="display: flex; gap: 5px; margin-bottom: 3px;">
                 <input type="text" id="chat-input" placeholder="Waiting..." disabled style="margin:0; flex-grow: 1;">
                 <button id="btn-send-chat" data-i18n="sendBtn" style="width: 60px; margin:0; padding: 10px;" disabled>Send</button>
                 <button id="btn-record" data-i18n="holdBtn" style="width: 80px; margin:0; padding: 10px;" disabled>Hold</button>
