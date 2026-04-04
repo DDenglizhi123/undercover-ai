@@ -10,9 +10,12 @@ services:
   web:
     build: .
     container_name: undercover_web
-    command: sh -c "python manage.py migrate --noinput && daphne -b 0.0.0.0 -p 8000 core.asgi:application"
+    command: sh -c "python manage.py migrate --noinput && daphne -e ssl:8000:privateKey=/app/ssl/key.pem:certKey=/app/ssl/cert.pem core.asgi:application"
     ports:
       - "8000:8000"
+    volumes:
+      - .:/app
+      - ./ssl:/app/ssl:ro
     depends_on:
       - redis
     environment:

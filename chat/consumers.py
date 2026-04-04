@@ -8,6 +8,12 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 ROOMS = {}
 WORD_CACHE = {'zh': None, 'en': None}
 
+EMOJI_POOL = [
+    '😎', '😜', '😴', '🤓', '🥳', '😈', '🤖', '👻', '🦊', '🐸',
+    '🐵', '🦁', '🐯', '🐻', '🐼', '🐨', '🐷', '🐮', '🐔', '🦄',
+    '🧙', '🧛', '🧜', '🧚', '🦸', '🥷', '👽', '🎃', '🤡', '🤠',
+]
+
 def get_word_pairs(lang):
     if WORD_CACHE.get(lang):
         return WORD_CACHE[lang]
@@ -27,17 +33,21 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         if self.room_name not in ROOMS:
             ROOMS[self.room_name] = {
-                'players': {},           # channel_name -> username
-                'username_to_channel': {}, # username -> channel_name (optimization)
-                'ready_players': set(),  # channel_names that are in the lobby, ready to play
-                'alive_players': [],      # list of channel_names
-                'words': {},             # channel_name -> {role, word}
-                'votes': {},             # voter_channel -> target_channel
-                'status': 'waiting',
+                'host': None,              # channel_name of host
+                'players': {},             # channel_name -> username
+                'username_to_channel': {}, # username -> channel_name
+                'avatars': {},             # channel_name -> emoji
+                'ready_players': set(),    # channel_names that clicked Ready
+                'alive_players': [],       # list of channel_names
+                'words': {},               # channel_name -> {role, word}
+                'votes': {},               # voter_channel -> target_channel
+                'status': 'waiting',       # waiting | speaking | voting
                 'speaking_order': [],
                 'current_speaker_index': 0,
-                'restart_votes': set(),   # channel_names that voted to restart
-                'lang': 'zh'
+                'round_number': 0,
+                'lang': 'zh',
+                'used_emojis': set(),      # track assigned emojis
+                'vote_timer_task': None,   # asyncio task for vote countdown
             }
 
         await self.channel_layer.group_add(self.room_group_name, self.channel_name)
@@ -47,75 +57,134 @@ class ChatConsumer(AsyncWebsocketConsumer):
         if self.room_name in ROOMS:
             room_data = ROOMS[self.room_name]
             if self.channel_name in room_data['players']:
-                username = room_data['players'].pop(self.channel_name)
-                room_data['username_to_channel'].pop(username, None)
-                room_data['ready_players'].discard(self.channel_name)
-                
-                # Remove from alive_players and speaking_order if in game
-                if self.channel_name in room_data['alive_players']:
-                    room_data['alive_players'].remove(self.channel_name)
-                if self.channel_name in room_data['speaking_order']:
-                    room_data['speaking_order'].remove(self.channel_name)
-                if self.channel_name in room_data['votes']:
-                    del room_data['votes'][self.channel_name]
-                if self.channel_name in room_data['restart_votes']:
-                    room_data['restart_votes'].discard(self.channel_name)
-
-                # Notify other players
+                username = room_data['players'][self.channel_name]
+                avatar = room_data['avatars'].get(self.channel_name, '')
                 lang = room_data.get('lang', 'zh')
-                leave_msg = f'🚪 【{username}】离开了游戏' if lang == 'zh' else f'🚪 [{username}] left the game'
                 
-                # Cleanup empty room
-                if not room_data['players']:
-                    del ROOMS[self.room_name]
-                else:
+                # During an active game, bot takes over
+                if room_data['status'] != 'waiting':
+                    if 'disconnected' not in room_data:
+                        room_data['disconnected'] = {}
+                    if 'bot_controlled' not in room_data:
+                        room_data['bot_controlled'] = set()
+                    
+                    room_data['disconnected'][username] = {
+                        'old_channel': self.channel_name,
+                        'avatar': avatar,
+                    }
+                    room_data['bot_controlled'].add(self.channel_name)
+                    
+                    dc_msg = f'🤖 {avatar} 【{username}】断线了，机器人接管中...' if lang == 'zh' else f'🤖 {avatar} [{username}] disconnected, bot taking over...'
                     await self.channel_layer.group_send(
                         self.room_group_name,
-                        {'type': 'chat_message', 'data': {'action': 'system_msg', 'message': leave_msg}}
+                        {'type': 'chat_message', 'data': {'action': 'system_msg', 'message': dc_msg}}
                     )
                     
-                    # Handle game state after player left
-                    if room_data['status'] == 'waiting':
-                        ready_names = [room_data['players'][ch] for ch in room_data['ready_players'] if ch in room_data['players']]
+                    # If this player is the current speaker, bot auto-skips after 2s
+                    if room_data['status'] == 'speaking' and room_data['speaking_order']:
+                        idx = room_data['current_speaker_index']
+                        if idx < len(room_data['speaking_order']) and room_data['speaking_order'][idx] == self.channel_name:
+                            asyncio.create_task(self._bot_skip_turn())
+                    
+                else:
+                    # In waiting state: remove immediately
+                    self._remove_player_data(room_data, self.channel_name, username)
+                    
+                    leave_msg = f'🚪 {avatar} 【{username}】离开了游戏' if lang == 'zh' else f'🚪 {avatar} [{username}] left the game'
+                    
+                    if not room_data['players'] and not room_data.get('disconnected'):
+                        del ROOMS[self.room_name]
+                    else:
                         await self.channel_layer.group_send(
                             self.room_group_name,
-                            {'type': 'chat_message', 'data': {'action': 'update_players', 'players': ready_names}}
+                            {'type': 'chat_message', 'data': {'action': 'system_msg', 'message': leave_msg}}
                         )
-                    elif room_data['status'] == 'speaking':
-                        # Check if current speaker left
-                        if room_data['speaking_order']:
-                            current_idx = room_data['current_speaker_index']
-                            # Adjust index if needed
-                            if current_idx >= len(room_data['speaking_order']):
-                                # Speaker was at end, move to voting
-                                room_data['status'] = 'voting'
-                                alive_names = [room_data['players'][ch] for ch in room_data['alive_players'] if ch in room_data['players']]
-                                if len(alive_names) >= 3:
-                                    await self.channel_layer.group_send(self.room_group_name, {
-                                        'type': 'chat_message',
-                                        'data': {'action': 'start_voting', 'alive_players': alive_names}
-                                    })
-                                else:
-                                    await self.end_game('🎮 游戏结束' if lang == 'zh' else '🎮 Game Ended', 
-                                                      '玩家不足，游戏结束' if lang == 'zh' else 'Not enough players, game ended')
-                            else:
-                                # Continue with next speaker
-                                await self.broadcast_current_speaker()
-                        elif len(room_data["alive_players"]) < 3:
-                            await self.end_game('🎮 游戏结束' if lang == 'zh' else '🎮 Game Ended',
-                                              '玩家不足，游戏结束' if lang == 'zh' else 'Not enough players, game ended')
-                    elif room_data['status'] == 'voting':
-                        # Check if all remaining alive players have voted
-                        alive_still_connected = [ch for ch in room_data['alive_players'] if ch in room_data['players']]
-                        votes_from_alive = {ch: target for ch, target in room_data['votes'].items() if ch in alive_still_connected}
-                        
-                        if len(alive_still_connected) < 3:
-                            await self.end_game('🎮 游戏结束' if lang == 'zh' else '🎮 Game Ended',
-                                              '玩家不足，游戏结束' if lang == 'zh' else 'Not enough players, game ended')
-                        elif len(votes_from_alive) >= len(alive_still_connected):
-                            await self.calculate_votes()
+                        if self.channel_name == room_data.get('host'):
+                            remaining = list(room_data['players'].keys())
+                            room_data['host'] = remaining[0] if remaining else None
+                        await self.broadcast_player_list()
                         
         await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
+
+    async def _bot_skip_turn(self):
+        """Bot auto-skips the speaking turn after 2 seconds."""
+        await asyncio.sleep(2)
+        room_data = ROOMS.get(self.room_name)
+        if not room_data or room_data['status'] != 'speaking':
+            return
+        
+        idx = room_data['current_speaker_index']
+        if idx >= len(room_data['speaking_order']):
+            return
+        
+        speaker_ch = room_data['speaking_order'][idx]
+        if speaker_ch not in room_data.get('bot_controlled', set()):
+            return  # Player reconnected before bot acted
+        
+        speaker_name = room_data['players'].get(speaker_ch, '?')
+        speaker_avatar = room_data['avatars'].get(speaker_ch, '❓')
+        lang = room_data.get('lang', 'zh')
+        
+        skip_msg = f'🤖 {speaker_avatar}【{speaker_name}】(机器人) 跳过发言' if lang == 'zh' else f'🤖 {speaker_avatar}[{speaker_name}] (bot) skipped turn'
+        await self.channel_layer.group_send(self.room_group_name, {
+            'type': 'chat_message',
+            'data': {'action': 'system_msg', 'message': skip_msg}
+        })
+        
+        room_data['current_speaker_index'] += 1
+        if room_data['current_speaker_index'] >= len(room_data['speaking_order']):
+            if len(room_data['alive_players']) < 3:
+                await self.end_game_inline()
+                return
+            await self.start_vote_phase()
+        else:
+            await self.broadcast_current_speaker()
+
+    async def _bot_random_vote(self):
+        """Bot votes randomly for alive players during voting phase."""
+        await asyncio.sleep(3)  # Wait 3s before bot votes
+        room_data = ROOMS.get(self.room_name)
+        if not room_data or room_data['status'] != 'voting':
+            return
+        
+        bot_channels = room_data.get('bot_controlled', set())
+        for bot_ch in list(bot_channels):
+            if bot_ch not in room_data.get('alive_players', []):
+                continue
+            if bot_ch in room_data.get('votes', {}):
+                continue  # Already voted somehow
+            
+            # Pick a random alive player that isn't this bot
+            targets = [ch for ch in room_data['alive_players'] if ch != bot_ch]
+            if targets:
+                target = random.choice(targets)
+                room_data['votes'][bot_ch] = target
+                
+                bot_name = room_data['players'].get(bot_ch, '?')
+                bot_avatar = room_data['avatars'].get(bot_ch, '❓')
+                lang = room_data.get('lang', 'zh')
+                
+                vote_msg = f'🤖 {bot_avatar}【{bot_name}】(机器人) 投票了' if lang == 'zh' else f'🤖 {bot_avatar}[{bot_name}] (bot) voted'
+                await self.channel_layer.group_send(self.room_group_name, {
+                    'type': 'chat_message',
+                    'data': {'action': 'system_msg', 'message': vote_msg}
+                })
+        
+        await self.broadcast_vote_counts()
+
+    def _remove_player_data(self, room_data, channel, username):
+        """Remove all traces of a player from room data."""
+        room_data['players'].pop(channel, None)
+        room_data['username_to_channel'].pop(username, None)
+        avatar = room_data['avatars'].pop(channel, None)
+        if avatar:
+            room_data['used_emojis'].discard(avatar)
+        room_data['ready_players'].discard(channel)
+        if channel in room_data.get('alive_players', []):
+            room_data['alive_players'].remove(channel)
+        if channel in room_data.get('speaking_order', []):
+            room_data['speaking_order'].remove(channel)
+        room_data.get('votes', {}).pop(channel, None)
 
     async def receive(self, text_data):
         data = json.loads(text_data)
@@ -125,8 +194,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         if action == 'join':
             await self.handle_join(data)
+        elif action == 'toggle_ready':
+            await self.handle_toggle_ready()
         elif action == 'start_game':
             await self.handle_start_game()
+        elif action == 'host_restart':
+            await self.handle_host_restart()
         elif action == 'chat_msg':
             await self.handle_chat_msg(data)
         elif action == 'chat_audio':
@@ -135,12 +208,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
             await self.handle_end_turn()
         elif action == 'vote':
             await self.handle_vote(data)
-        elif action == 'propose_restart':
-            await self.handle_propose_restart()
-        elif action == 'vote_restart':
-            await self.handle_vote_restart()
-        elif action == 'play_again':
-            await self.handle_play_again()
+        elif action == 'cancel_vote':
+            await self.handle_cancel_vote()
 
     async def handle_join(self, data):
         room_data = ROOMS[self.room_name]
@@ -148,41 +217,165 @@ class ChatConsumer(AsyncWebsocketConsumer):
         lang = data.get('lang', 'zh')
         room_data['lang'] = lang
 
+        # Check for reconnection
+        dc = room_data.get('disconnected', {})
+        if username in dc:
+            dc_info = dc.pop(username)
+            old_channel = dc_info['old_channel']
+            avatar = dc_info['avatar']
+            
+            # Cancel the grace period timer
+            timer = room_data.get('dc_timers', {}).pop(username, None)
+            if timer:
+                timer.cancel()
+            
+            # Remove from bot control — player is back
+            room_data.get('bot_controlled', set()).discard(old_channel)
+            
+            new_ch = self.channel_name
+            
+            # Migrate data from old_channel to new_channel
+            room_data['players'].pop(old_channel, None)
+            room_data['players'][new_ch] = username
+            room_data['username_to_channel'][username] = new_ch
+            
+            room_data['avatars'].pop(old_channel, None)
+            room_data['avatars'][new_ch] = avatar
+            
+            if old_channel in room_data['ready_players']:
+                room_data['ready_players'].discard(old_channel)
+                room_data['ready_players'].add(new_ch)
+            
+            if old_channel in room_data['alive_players']:
+                idx = room_data['alive_players'].index(old_channel)
+                room_data['alive_players'][idx] = new_ch
+            
+            if old_channel in room_data['speaking_order']:
+                idx = room_data['speaking_order'].index(old_channel)
+                room_data['speaking_order'][idx] = new_ch
+            
+            if old_channel in room_data['words']:
+                room_data['words'][new_ch] = room_data['words'].pop(old_channel)
+            
+            if old_channel in room_data['votes']:
+                room_data['votes'][new_ch] = room_data['votes'].pop(old_channel)
+            for voter_ch, target_ch in list(room_data['votes'].items()):
+                if target_ch == old_channel:
+                    room_data['votes'][voter_ch] = new_ch
+            
+            if room_data['host'] == old_channel:
+                room_data['host'] = new_ch
+            
+            current_speaker = None
+            if room_data['status'] == 'speaking' and room_data['speaking_order']:
+                idx = room_data['current_speaker_index']
+                if idx < len(room_data['speaking_order']):
+                    speaker_ch = room_data['speaking_order'][idx]
+                    current_speaker = room_data['players'].get(speaker_ch)
+            
+            word_info = room_data['words'].get(new_ch)
+            host_name = room_data['players'].get(room_data['host'])
+            
+            await self.send(text_data=json.dumps({
+                'action': 'join_success',
+                'is_spectator': False,
+                'is_reconnect': True,
+                'current_speaker': current_speaker,
+                'my_avatar': avatar,
+                'host': host_name,
+                'is_host': new_ch == room_data['host'],
+                'game_status': room_data['status'],
+                'word': word_info['word'] if word_info else None,
+                'role': word_info['role'] if word_info else None,
+            }))
+            
+            rc_msg = f'🔗 {avatar} 【{username}】重新连接了！' if lang == 'zh' else f'🔗 {avatar} [{username}] reconnected!'
+            await self.channel_layer.group_send(
+                self.room_group_name,
+                {'type': 'chat_message', 'data': {'action': 'system_msg', 'message': rc_msg}}
+            )
+            
+            await self.broadcast_player_list()
+            return
+        
+        # Normal new join
         if username in room_data['username_to_channel']:
             error_msg = 'Nickname already taken!' if lang == 'en' else '昵称已被占用！'
             await self.send(text_data=json.dumps({'action': 'join_error', 'message': error_msg}))
             return
 
+        # Assign a random emoji avatar
+        available = [e for e in EMOJI_POOL if e not in room_data['used_emojis']]
+        if not available:
+            available = EMOJI_POOL  # fallback: allow duplicates if pool exhausted
+        avatar = random.choice(available)
+        room_data['used_emojis'].add(avatar)
+        
         room_data['players'][self.channel_name] = username
         room_data['username_to_channel'][username] = self.channel_name
+        room_data['avatars'][self.channel_name] = avatar
         
+        # Assign first player as host
+        if room_data['host'] is None:
+            room_data['host'] = self.channel_name
+
         is_spectator = room_data['status'] != 'waiting'
         current_speaker = None
         if is_spectator and room_data['status'] == 'speaking' and room_data['speaking_order']:
-            current_speaker_ch = room_data['speaking_order'][room_data['current_speaker_index']]
-            current_speaker = room_data['players'].get(current_speaker_ch)
+            idx = room_data['current_speaker_index']
+            if idx < len(room_data['speaking_order']):
+                current_speaker_ch = room_data['speaking_order'][idx]
+                current_speaker = room_data['players'].get(current_speaker_ch)
+
+        host_name = room_data['players'].get(room_data['host'])
 
         await self.send(text_data=json.dumps({
             'action': 'join_success',
             'is_spectator': is_spectator,
-            'current_speaker': current_speaker
+            'current_speaker': current_speaker,
+            'my_avatar': avatar,
+            'host': host_name,
+            'is_host': self.channel_name == room_data['host'],
+            'game_status': room_data['status'],
         }))
 
-        if not is_spectator:
+        # Broadcast player list to everyone
+        await self.broadcast_player_list()
+        
+        # Send join message
+        join_msg = f'{avatar} 【{username}】加入了游戏' if lang == 'zh' else f'{avatar} [{username}] joined the game'
+        await self.channel_layer.group_send(
+            self.room_group_name,
+            {'type': 'chat_message', 'data': {'action': 'system_msg', 'message': join_msg}}
+        )
+
+    async def handle_toggle_ready(self):
+        room_data = ROOMS[self.room_name]
+        if room_data['status'] != 'waiting':
+            return
+        
+        if self.channel_name in room_data['ready_players']:
+            room_data['ready_players'].discard(self.channel_name)
+        else:
             room_data['ready_players'].add(self.channel_name)
-            ready_names = [room_data['players'][ch] for ch in room_data['ready_players'] if ch in room_data['players']]
-            await self.channel_layer.group_send(
-                self.room_group_name,
-                {'type': 'chat_message', 'data': {'action': 'update_players', 'players': ready_names}}
-            )
+        
+        await self.broadcast_player_list()
 
     async def handle_start_game(self):
         room_data = ROOMS[self.room_name]
+        
+        # Only host can start
+        if self.channel_name != room_data['host']:
+            return
+        
+        if room_data['status'] != 'waiting':
+            return
+        
         channel_names = [ch for ch in room_data['ready_players'] if ch in room_data['players']]
         lang = room_data['lang']
         
         if len(channel_names) < 3:
-            error_msg = 'At least 3 players required! 👥' if lang == 'en' else '至少需要3人！ 👥'
+            error_msg = 'At least 3 ready players required! 👥' if lang == 'en' else '至少需要3名准备好的玩家！ 👥'
             await self.send(text_data=json.dumps({'action': 'error', 'message': error_msg}))
             return
 
@@ -193,7 +386,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         room_data['alive_players'] = list(channel_names)
         room_data['words'] = {}
-        room_data['restart_votes'] = set() # Reset restart votes when a new game starts
+        room_data['round_number'] = 0
 
         for ch in channel_names:
             if ch == undercover_channel:
@@ -209,31 +402,122 @@ class ChatConsumer(AsyncWebsocketConsumer):
             room_data['words'][ch] = {'role': role, 'word': word}
             await self.channel_layer.send(ch, {
                 'type': 'chat_message', 
-                'data': {'action': 'game_started', 'role': role, 'word': word}
+                'data': {
+                    'action': 'game_started', 
+                    'role': role, 
+                    'word': word,
+                }
             })
+        
+        # Notify all players of game status change
+        await self.broadcast_player_list()
         
         await self.start_speaking_round()
 
+    async def handle_host_restart(self):
+        room_data = ROOMS[self.room_name]
+        
+        # Only host can restart
+        if self.channel_name != room_data['host']:
+            return
+        
+        # Cancel vote timer if active
+        if room_data.get('vote_timer_task'):
+            room_data['vote_timer_task'].cancel()
+            room_data['vote_timer_task'] = None
+        
+        lang = room_data['lang']
+        room_data['status'] = 'waiting'
+        room_data['ready_players'] = set()
+        room_data['alive_players'] = []
+        room_data['words'] = {}
+        room_data['votes'] = {}
+        room_data['speaking_order'] = []
+        room_data['current_speaker_index'] = 0
+        room_data['round_number'] = 0
+        
+        restart_msg = '🔄 房主重置了游戏，请重新准备！' if lang == 'zh' else '🔄 Host reset the game. Please ready up!'
+        await self.channel_layer.group_send(
+            self.room_group_name,
+            {'type': 'chat_message', 'data': {'action': 'system_msg', 'message': restart_msg}}
+        )
+        
+        # Remove bot-controlled players
+        bot_channels = list(room_data.get('bot_controlled', set()))
+        for bot_ch in bot_channels:
+            bot_name = room_data['players'].get(bot_ch)
+            if bot_name:
+                self._remove_player_data(room_data, bot_ch, bot_name)
+                room_data.get('disconnected', {}).pop(bot_name, None)
+        room_data['bot_controlled'] = set()
+        
+        if room_data.get('host') not in room_data['players']:
+            remaining = list(room_data['players'].keys())
+            room_data['host'] = remaining[0] if remaining else None
+        
+        await self.channel_layer.group_send(
+            self.room_group_name,
+            {'type': 'chat_message', 'data': {'action': 'game_reset'}}
+        )
+        
+        await self.broadcast_player_list()
+
     async def handle_chat_msg(self, data):
-        if self.is_current_speaker():
-            room_data = ROOMS[self.room_name]
+        room_data = ROOMS[self.room_name]
+        msg = data.get('msg', '').strip()
+        if not msg:
+            return
+        
+        # Before game starts: anyone can chat. During game: only current speaker.
+        if room_data['status'] == 'waiting':
+            avatar = room_data['avatars'].get(self.channel_name, '❓')
+            sender = room_data['players'].get(self.channel_name, 'Unknown')
             await self.channel_layer.group_send(self.room_group_name, {
                 'type': 'chat_message', 
                 'data': {
                     'action': 'new_chat_msg', 
-                    'sender': room_data['players'][self.channel_name], 
-                    'msg': data.get('msg')
+                    'sender': sender,
+                    'avatar': avatar,
+                    'msg': msg
+                }
+            })
+        elif self.is_current_speaker():
+            avatar = room_data['avatars'].get(self.channel_name, '❓')
+            sender = room_data['players'].get(self.channel_name, 'Unknown')
+            await self.channel_layer.group_send(self.room_group_name, {
+                'type': 'chat_message', 
+                'data': {
+                    'action': 'new_chat_msg', 
+                    'sender': sender,
+                    'avatar': avatar,
+                    'msg': msg
                 }
             })
 
     async def handle_chat_audio(self, data):
-        if self.is_current_speaker():
-            room_data = ROOMS[self.room_name]
+        room_data = ROOMS[self.room_name]
+        
+        if room_data['status'] == 'waiting':
+            avatar = room_data['avatars'].get(self.channel_name, '❓')
+            sender = room_data['players'].get(self.channel_name, 'Unknown')
             await self.channel_layer.group_send(self.room_group_name, {
                 'type': 'chat_message', 
                 'data': {
                     'action': 'new_chat_audio', 
-                    'sender': room_data['players'][self.channel_name], 
+                    'sender': sender,
+                    'avatar': avatar,
+                    'audio_data': data.get('audio_data')
+                }
+            })
+        elif self.is_current_speaker():
+            avatar = room_data['avatars'].get(self.channel_name, '❓')
+            sender = room_data['players'].get(self.channel_name, 'Unknown')
+            await self.channel_layer.group_send(self.room_group_name, {
+                'type': 'chat_message', 
+                'data': {
+                    'action': 'new_chat_audio', 
+                    'sender': sender,
+                    'avatar': avatar,
                     'audio_data': data.get('audio_data')
                 }
             })
@@ -243,86 +527,102 @@ class ChatConsumer(AsyncWebsocketConsumer):
             room_data = ROOMS[self.room_name]
             room_data['current_speaker_index'] += 1
             if room_data['current_speaker_index'] >= len(room_data['speaking_order']):
-                room_data['status'] = 'voting'
-                alive_names = [room_data["players"][ch] for ch in room_data["alive_players"] if ch in room_data["players"]]
-                if len(alive_names) < 3:
-                    await self.end_game('🎮 游戏结束' if room_data.get("lang") == 'zh' else '🎮 Game Ended','玩家不足，游戏结束' if room_data.get("lang") == 'zh' else 'Not enough players, game ended')
+                if len(room_data['alive_players']) < 3:
+                    await self.end_game_inline()
                     return
-                await self.channel_layer.group_send(self.room_group_name, {
-                    'type': 'chat_message', 
-                    'data': {'action': 'start_voting', 'alive_players': alive_names}
-                })
+                await self.start_vote_phase()
             else:
                 await self.broadcast_current_speaker()
 
     async def handle_vote(self, data):
         room_data = ROOMS[self.room_name]
-        if self.channel_name not in room_data['alive_players']: return
+        if room_data['status'] != 'voting':
+            return
+        if self.channel_name not in room_data['alive_players']:
+            return
         
         target_username = data.get('target')
         target_channel = room_data['username_to_channel'].get(target_username)
         
-        if target_channel:
-            room_data['votes'][self.channel_name] = target_channel
-            if len(room_data['votes']) == len(room_data['alive_players']):
-                await self.calculate_votes()
+        if not target_channel or target_channel not in room_data['alive_players']:
+            return
+        
+        # Don't allow voting for yourself
+        if target_channel == self.channel_name:
+            return
+        
+        room_data['votes'][self.channel_name] = target_channel
+        
+        # Broadcast vote update (timer handles completion)
+        await self.broadcast_vote_counts()
 
-    async def handle_propose_restart(self):
+    async def handle_cancel_vote(self):
         room_data = ROOMS[self.room_name]
-        if room_data['status'] in ['waiting', 'voting']: # Prevent restart during waiting or voting phase if desired, or allow it
-            pass 
+        if room_data['status'] != 'voting':
+            return
+        if self.channel_name not in room_data['alive_players']:
+            return
         
-        # Add the proposer's vote automatically
-        room_data['restart_votes'].add(self.channel_name)
-        proposer_name = room_data['players'][self.channel_name]
+        if self.channel_name in room_data['votes']:
+            del room_data['votes'][self.channel_name]
+            await self.broadcast_vote_counts()
+
+    async def start_vote_phase(self):
+        room_data = ROOMS[self.room_name]
+        room_data['status'] = 'voting'
+        room_data['votes'] = {}
         
-        # Broadcast proposal to the room
+        alive_names = [room_data['players'][ch] for ch in room_data['alive_players'] if ch in room_data['players']]
+        
         await self.channel_layer.group_send(self.room_group_name, {
-            'type': 'chat_message', 
+            'type': 'chat_message',
             'data': {
-                'action': 'restart_proposed',
-                'proposer': proposer_name,
-                'current_votes': len(room_data['restart_votes']),
-                'total_needed': (len(room_data['players']) // 2) + 1 # Simple majority
+                'action': 'start_voting',
+                'alive_players': alive_names,
+                'vote_duration': 30,
             }
         })
-        await self.check_restart_votes()
-
-    async def handle_vote_restart(self):
-        room_data = ROOMS[self.room_name]
-        if self.channel_name in room_data['players']:
-            room_data['restart_votes'].add(self.channel_name)
-            voter_name = room_data['players'][self.channel_name]
-            
-            await self.channel_layer.group_send(self.room_group_name, {
-                'type': 'chat_message', 
-                'data': {
-                    'action': 'restart_progress',
-                    'voter': voter_name,
-                    'current_votes': len(room_data['restart_votes']),
-                    'total_needed': (len(room_data['players']) // 2) + 1
-                }
-            })
-            await self.check_restart_votes()
-
-    async def check_restart_votes(self):
-        room_data = ROOMS[self.room_name]
-        total_players = len(room_data['players'])
-        votes_needed = (total_players // 2) + 1
         
-        if len(room_data['restart_votes']) >= votes_needed:
-            # Restart condition met
-            await self.channel_layer.group_send(self.room_group_name, {
-                'type': 'chat_message', 
-                'data': {
-                    'action': 'system_msg',
-                    'message': '🔄 多数玩家同意，游戏重新开始！' if room_data['lang'] == 'zh' else '🔄 Majority agreed, game restarting!'
-                }
-            })
-            await asyncio.sleep(2) # Brief pause before restarting
-            # Mark all current players as ready for the restart
-            room_data['ready_players'] = set(room_data['players'].keys())
-            await self.handle_start_game()
+        # Start 30s vote timer
+        room_data['vote_timer_task'] = asyncio.create_task(self.run_vote_timer())
+        
+        # Trigger bot votes for disconnected players
+        bot_channels = room_data.get('bot_controlled', set())
+        if any(ch in room_data['alive_players'] for ch in bot_channels):
+            asyncio.create_task(self._bot_random_vote())
+
+    async def run_vote_timer(self):
+        try:
+            await asyncio.sleep(30)
+            room_data = ROOMS.get(self.room_name)
+            if not room_data or room_data['status'] != 'voting':
+                return
+            # Time's up — calculate with whoever voted; non-voters are skipped
+            await self.calculate_votes()
+        except asyncio.CancelledError:
+            pass
+
+    async def broadcast_vote_counts(self):
+        room_data = ROOMS[self.room_name]
+        # Build vote count per target username
+        vote_counts = {}
+        for voter_ch, target_ch in room_data['votes'].items():
+            target_name = room_data['players'].get(target_ch)
+            if target_name:
+                vote_counts[target_name] = vote_counts.get(target_name, 0) + 1
+        
+        # Also include who has voted (by avatar)
+        voters = [room_data['avatars'].get(ch, '❓') for ch in room_data['votes'].keys()]
+        
+        await self.channel_layer.group_send(self.room_group_name, {
+            'type': 'chat_message',
+            'data': {
+                'action': 'vote_update',
+                'vote_counts': vote_counts,
+                'voted_count': len(room_data['votes']),
+                'total_alive': len(room_data['alive_players']),
+            }
+        })
 
     def is_current_speaker(self):
         room_data = ROOMS.get(self.room_name)
@@ -332,7 +632,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
             idx = room_data['current_speaker_index']
             if idx >= len(room_data['speaking_order']): return False
             speaker_ch = room_data['speaking_order'][idx]
-            # Make sure speaker is still connected
             if speaker_ch not in room_data['players']: return False
             return self.channel_name == speaker_ch
         except (IndexError, KeyError):
@@ -342,9 +641,19 @@ class ChatConsumer(AsyncWebsocketConsumer):
         room_data = ROOMS[self.room_name]
         room_data['status'] = 'speaking'
         room_data['votes'] = {} 
+        room_data['round_number'] += 1
         room_data['speaking_order'] = list(room_data['alive_players'])
         random.shuffle(room_data['speaking_order'])
         room_data['current_speaker_index'] = 0
+        
+        lang = room_data['lang']
+        round_msg = f'--- 第{room_data["round_number"]}轮发言 ---' if lang == 'zh' else f'--- Round {room_data["round_number"]} ---'
+        await self.channel_layer.group_send(self.room_group_name, {
+            'type': 'chat_message',
+            'data': {'action': 'system_msg', 'message': round_msg}
+        })
+        
+        await self.broadcast_player_list()
         await self.broadcast_current_speaker()
 
     async def broadcast_current_speaker(self):
@@ -359,128 +668,254 @@ class ChatConsumer(AsyncWebsocketConsumer):
         
         # Check if we've gone through all speakers
         if room_data['current_speaker_index'] >= len(room_data['speaking_order']):
-            # Move to voting phase
-            room_data['status'] = 'voting'
-            alive_names = [room_data['players'][ch] for ch in room_data['alive_players'] if ch in room_data['players']]
-            if len(alive_names) >= 3:
-                await self.channel_layer.group_send(self.room_group_name, {
-                    'type': 'chat_message',
-                    'data': {'action': 'start_voting', 'alive_players': alive_names}
-                })
+            if len(room_data['alive_players']) >= 3:
+                await self.start_vote_phase()
             return
         
         speaker_ch = room_data['speaking_order'][room_data['current_speaker_index']]
         current_name = room_data['players'][speaker_ch]
+        current_avatar = room_data['avatars'].get(speaker_ch, '❓')
         await self.channel_layer.group_send(self.room_group_name, {
             'type': 'chat_message', 
-            'data': {'action': 'speaker_update', 'speaker': current_name}
+            'data': {
+                'action': 'speaker_update', 
+                'speaker': current_name,
+                'speaker_avatar': current_avatar,
+            }
         })
+        
+        # If speaker is bot-controlled, auto-skip
+        if speaker_ch in room_data.get('bot_controlled', set()):
+            asyncio.create_task(self._bot_skip_turn())
 
     async def calculate_votes(self):
         room_data = ROOMS[self.room_name]
         lang = room_data['lang']
+        round_num = room_data['round_number']
         
-        aggregated_votes = {} # target_name -> [voter_names]
-        vote_counts = {}      # target_channel -> count
+        # Build vote result message using emojis
+        # Format: Round X Voting result:
+        #   😎,😜 voted 😴;
+        #   😴 skipped voting.
         
+        # Group voters by target
+        target_to_voters = {}  # target_ch -> [voter_ch]
         for voter_ch, target_ch in room_data['votes'].items():
-            # Skip votes from disconnected players
             if voter_ch not in room_data['players']:
                 continue
-            target_name = room_data['players'].get(target_ch)
-            voter_name = room_data['players'].get(voter_ch)
-            if target_name and voter_name:
-                aggregated_votes.setdefault(target_name, []).append(voter_name)
-                vote_counts[target_ch] = vote_counts.get(target_ch, 0) + 1
-            
+            target_to_voters.setdefault(target_ch, []).append(voter_ch)
+        
+        # Find who skipped
+        skipped = [ch for ch in room_data['alive_players'] 
+                   if ch in room_data['players'] and ch not in room_data['votes']]
+        
+        # Build result message
+        result_lines = []
+        if lang == 'zh':
+            result_lines.append(f'📊 第{round_num}轮投票结果:')
+        else:
+            result_lines.append(f'📊 Round {round_num} Voting result:')
+        
+        for target_ch, voter_chs in target_to_voters.items():
+            target_avatar = room_data['avatars'].get(target_ch, '❓')
+            voter_avatars = ','.join([room_data['avatars'].get(ch, '❓') for ch in voter_chs])
+            if lang == 'zh':
+                result_lines.append(f'  {voter_avatars} 投了 {target_avatar};')
+            else:
+                result_lines.append(f'  {voter_avatars} voted {target_avatar};')
+        
+        if skipped:
+            skipped_avatars = ','.join([room_data['avatars'].get(ch, '❓') for ch in skipped])
+            if lang == 'zh':
+                result_lines.append(f'  {skipped_avatars} 弃票了。')
+            else:
+                result_lines.append(f'  {skipped_avatars} skipped voting.')
+        
+        result_msg = '\n'.join(result_lines)
+        
+        # Calculate elimination
+        vote_counts = {}  # target_channel -> count
+        for voter_ch, target_ch in room_data['votes'].items():
+            if voter_ch not in room_data['players']:
+                continue
+            vote_counts[target_ch] = vote_counts.get(target_ch, 0) + 1
+        
         max_votes = max(vote_counts.values()) if vote_counts else 0
-        eliminated_channels = [ch for ch, count in vote_counts.items() if count == max_votes]
+        eliminated_channels = [ch for ch, count in vote_counts.items() if count == max_votes] if max_votes > 0 else []
         
         is_tie = len(eliminated_channels) > 1
+        eliminated_name = None
+        eliminated_avatar = None
         
-        if is_tie:
-            msg = '⚖️ 出现平票！没有人出局。' if lang == 'zh' else '⚖️ Tie vote! No one is eliminated.'
+        if is_tie or max_votes == 0:
+            if lang == 'zh':
+                result_msg += '\n⚖️ 平票！没有人出局。'
+            else:
+                result_msg += '\n⚖️ Tie vote! No one is eliminated.'
         else:
             eliminated_channel = eliminated_channels[0]
             eliminated_name = room_data['players'].get(eliminated_channel, 'Unknown')
+            eliminated_avatar = room_data['avatars'].get(eliminated_channel, '❓')
             if eliminated_channel in room_data['alive_players']:
                 room_data['alive_players'].remove(eliminated_channel)
-            msg = f'💀 【{eliminated_name}】被投票出局！' if lang == 'zh' else f'💀 [{eliminated_name}] was voted out!'
+            if lang == 'zh':
+                result_msg += f'\n💀 {eliminated_avatar}【{eliminated_name}】被投票出局！'
+            else:
+                result_msg += f'\n💀 {eliminated_avatar} [{eliminated_name}] was voted out!'
 
-        all_eliminated_names = [name for ch, name in room_data['players'].items() if ch not in room_data['alive_players']]
-
+        # Send result as system message in chat
         await self.channel_layer.group_send(self.room_group_name, {
             'type': 'chat_message', 
             'data': {
-                'action': 'vote_result', 
-                'message': msg, 
-                'aggregated_votes': aggregated_votes, 
-                'eliminated_players': all_eliminated_names
+                'action': 'vote_result_inline',
+                'message': result_msg,
             }
         })
+        
+        # Update player list (to reflect eliminated status)
+        await self.broadcast_player_list()
 
-        # Schedule the next phase as a background task so the receive() handler
-        # can return, allowing the last voter's consumer to process the vote_result.
+        # Schedule the next phase
         asyncio.create_task(self._delayed_next_phase(is_tie))
 
     async def _delayed_next_phase(self, is_tie):
-        await asyncio.sleep(5)
+        await asyncio.sleep(3)
 
         room_data = ROOMS.get(self.room_name)
         if not room_data or room_data['status'] != 'voting':
-            return  # Room deleted or game state changed (e.g. restart)
+            return
 
         lang = room_data['lang']
 
-        # Check if enough players remain
         if len(room_data["alive_players"]) < 3:
-            await self.end_game('🎮 游戏结束' if lang == 'zh' else '🎮 Game Ended',
-                              '玩家不足，游戏结束' if lang == 'zh' else 'Not enough players, game ended')
+            await self.end_game_inline()
             return
 
         if not is_tie:
-            # Check win conditions - only count players who still have words assigned
             bad_guys = [ch for ch in room_data['alive_players'] 
                        if ch in room_data['words'] and ("Undercover" in room_data['words'][ch]['role'] or "Blank" in room_data['words'][ch]['role'])]
             civilians = [ch for ch in room_data['alive_players'] 
                         if ch in room_data['words'] and "Civilian" in room_data['words'][ch]['role']]
             
             if not bad_guys:
-                await self.end_game('👑 Civilians/平民', '👑 平民胜利！所有坏人已出局。' if lang == 'zh' else '👑 Civilians Win! All bad guys eliminated.')
+                await self.end_game_inline()
                 return
             elif len(bad_guys) >= len(civilians):
-                await self.end_game('😈 Bad Guys/坏人', '😈 坏人胜利！平民人数不足。' if lang == 'zh' else '😈 Bad guys Win! Too many civilians died.')
+                await self.end_game_inline()
                 return
 
         await self.start_speaking_round()
 
-    async def handle_play_again(self):
-        room_data = ROOMS.get(self.room_name)
-        if not room_data or room_data['status'] != 'waiting':
-            return
-        # Mark this player as ready and broadcast the ready player list
-        room_data['ready_players'].add(self.channel_name)
-        ready_names = [room_data['players'][ch] for ch in room_data['ready_players'] if ch in room_data['players']]
-        await self.channel_layer.group_send(
-            self.room_group_name,
-            {'type': 'chat_message', 'data': {'action': 'update_players', 'players': ready_names}}
-        )
-
-    async def end_game(self, winner, message):
+    async def end_game_inline(self):
+        """Display game results as chat messages instead of switching screens."""
         room_data = ROOMS[self.room_name]
-        room_data['status'] = 'waiting'
-        room_data['ready_players'] = set()  # Reset: players must click "Play Again" to rejoin lobby
-        all_identities = {room_data['players'][ch]: info for ch, info in room_data['words'].items()}
+        lang = room_data['lang']
+        
+        # Determine winner
+        bad_guys = [ch for ch in room_data['alive_players'] 
+                   if ch in room_data['words'] and ("Undercover" in room_data['words'][ch]['role'] or "Blank" in room_data['words'][ch]['role'])]
+        civilians = [ch for ch in room_data['alive_players'] 
+                    if ch in room_data['words'] and "Civilian" in room_data['words'][ch]['role']]
+        
+        if not bad_guys:
+            if lang == 'zh':
+                winner_msg = '🏆 平民胜利！'
+            else:
+                winner_msg = '🏆 Civilians Win!'
+        elif len(bad_guys) >= len(civilians):
+            if lang == 'zh':
+                winner_msg = '🏆 卧底胜利！'
+            else:
+                winner_msg = '🏆 Undercover Wins!'
+        else:
+            if lang == 'zh':
+                winner_msg = '🏆 游戏结束！'
+            else:
+                winner_msg = '🏆 Game Over!'
+        
+        # Build identity reveal
+        identity_lines = [winner_msg]
+        for ch, info in room_data['words'].items():
+            avatar = room_data['avatars'].get(ch, '❓')
+            role_short = info['role']
+            identity_lines.append(f'{avatar}({role_short})')
+        
+        game_over_msg = '\n'.join(identity_lines)
+        
+        # Send as system message
         await self.channel_layer.group_send(self.room_group_name, {
             'type': 'chat_message', 
             'data': {
-                'action': 'game_over', 
-                'winner': winner, 
-                'message': message, 
-                'identities': all_identities
+                'action': 'game_over_inline',
+                'message': game_over_msg,
+            }
+        })
+        
+        # Reset game state
+        room_data['status'] = 'waiting'
+        room_data['ready_players'] = set()
+        room_data['alive_players'] = []
+        room_data['votes'] = {}
+        room_data['speaking_order'] = []
+        room_data['current_speaker_index'] = 0
+        
+        if room_data.get('vote_timer_task'):
+            room_data['vote_timer_task'].cancel()
+            room_data['vote_timer_task'] = None
+        
+        # Remove bot-controlled (disconnected) players now that game is over
+        bot_channels = list(room_data.get('bot_controlled', set()))
+        for bot_ch in bot_channels:
+            bot_name = room_data['players'].get(bot_ch)
+            if bot_name:
+                bot_avatar = room_data['avatars'].get(bot_ch, '')
+                self._remove_player_data(room_data, bot_ch, bot_name)
+                # Also clean up disconnected entry
+                room_data.get('disconnected', {}).pop(bot_name, None)
+                
+                remove_msg = f'🚪 {bot_avatar} 【{bot_name}】已从房间移除' if lang == 'zh' else f'🚪 {bot_avatar} [{bot_name}] removed from room'
+                await self.channel_layer.group_send(self.room_group_name, {
+                    'type': 'chat_message',
+                    'data': {'action': 'system_msg', 'message': remove_msg}
+                })
+        room_data['bot_controlled'] = set()
+        
+        # Reassign host if needed
+        if room_data.get('host') not in room_data['players']:
+            remaining = list(room_data['players'].keys())
+            room_data['host'] = remaining[0] if remaining else None
+        
+        await self.broadcast_player_list()
+
+    async def broadcast_player_list(self):
+        """Broadcast full player state to all clients."""
+        room_data = ROOMS.get(self.room_name)
+        if not room_data:
+            return
+        
+        host_name = room_data['players'].get(room_data['host'])
+        
+        players_info = []
+        for ch, name in room_data['players'].items():
+            players_info.append({
+                'name': name,
+                'avatar': room_data['avatars'].get(ch, '❓'),
+                'is_ready': ch in room_data['ready_players'],
+                'is_host': ch == room_data['host'],
+                'is_alive': ch in room_data['alive_players'] if room_data['status'] != 'waiting' else True,
+            })
+        
+        await self.channel_layer.group_send(self.room_group_name, {
+            'type': 'chat_message',
+            'data': {
+                'action': 'update_players',
+                'players': players_info,
+                'host': host_name,
+                'game_status': room_data['status'],
+                'ready_count': len(room_data['ready_players']),
+                'total_count': len(room_data['players']),
             }
         })
 
     async def chat_message(self, event):
         await self.send(text_data=json.dumps(event['data']))
-
