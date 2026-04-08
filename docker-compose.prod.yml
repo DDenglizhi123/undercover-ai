@@ -7,9 +7,12 @@ services:
   web:
     build: .
     container_name: undercover_web
-    command: sh -c "python manage.py migrate --noinput && daphne -b 0.0.0.0 -p 8000 core.asgi:application"
+    command: sh -c "python manage.py migrate --noinput && daphne -e ssl:8000:privateKey=/app/ssl/key.pem:certKey=/app/ssl/cert.pem core.asgi:application"
     ports:
       - "80:8000"
+      - "443:8000"
+    volumes:
+      - ./ssl:/app/ssl:ro
     depends_on:
       - redis
     restart: unless-stopped
@@ -17,5 +20,5 @@ services:
       - PYTHONUNBUFFERED=1
       - REDIS_HOST=redis
       - DEBUG=False
-      - ALLOWED_HOSTS=localhost,127.0.0.1,YOUR_VPS_IP
+      - ALLOWED_HOSTS=localhost,127.0.0.1,159.223.75.154
       - SECRET_KEY=pljQ3-ELmgQQrnhN2XFlJ1uJD1Darp9UOP6Pp6rSwIt7wKzcc-uXHwrzs7gdG6kVsHw
