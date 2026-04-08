@@ -361,24 +361,19 @@
             }));
         }
 
-        function showEmojiReaction(emoji, targetName) {
+        function showEmojiReaction(emoji, targetName, senderName, senderAvatar, targetAvatar) {
             const area = document.getElementById('emoji-reaction-area');
             if (area) {
-                // Keep only 3 messages
-                while (area.children.length >= 3) {
-                    area.removeChild(area.firstChild);
-                }
-                
-                const now = new Date();
-                const timeStr = now.toLocaleTimeString(window.currentLang === 'zh' ? 'zh-CN' : 'en-US', { hour: '2-digit', minute: '2-digit' });
+                // Clear previous and show only latest
+                area.innerHTML = '';
                 
                 const msg = document.createElement('div');
                 msg.className = 'emoji-reaction-msg';
                 const isZh = window.currentLang === 'zh';
                 msg.textContent = isZh 
-                    ? `${timeStr} ${myUsername} 发送了 ${emoji} 给 ${targetName}`
-                    : `${timeStr} ${myUsername} sent a ${emoji} to ${targetName}`;
-                area.insertBefore(msg, area.firstChild);
+                    ? `${senderAvatar || senderName}发送${emoji}给${targetAvatar || targetName}`
+                    : `${senderAvatar || senderName} sent ${emoji} to ${targetAvatar || targetName}`;
+                area.appendChild(msg);
             }
         }
 
@@ -1003,9 +998,11 @@
                     // Check if message contains a quote pattern: 🐵: reply 「avatar: quoted message」
                     const quoteMatch = data.msg.match(/^(🐵|🐯): (.+) 「([^:]+): (.+?)」$/);
                     let msgContent;
+                    let quotedContent = '';
                     if (quoteMatch) {
                         const [, emoji, replyMsg, quotedSender, quotedText] = quoteMatch;
-                        msgContent = `<span class="msg-avatar">${avatar}</span>: <span class="reply-text">${replyMsg}</span> <span class="quoted-msg">「<span class="quoted-sender">${quotedSender}:</span><span class="quoted-text">${quotedText}</span>」</span>`;
+                        msgContent = `<span class="msg-avatar">${avatar}</span>: <span class="reply-text">${replyMsg}</span>`;
+                        quotedContent = `<div class="quoted-msg">「<span class="quoted-sender">${quotedSender}:</span><span class="quoted-text">${quotedText}</span>」</div>`;
                     } else {
                         msgContent = `<span class="msg-avatar">${avatar}</span>: ${data.msg}`;
                     }
@@ -1022,6 +1019,9 @@
                     
                     msgDiv.innerHTML = msgContent;
                     msgDiv.appendChild(replyBtn);
+                    if (quotedContent) {
+                        msgDiv.insertAdjacentHTML('beforeend', quotedContent);
+                    }
                     
                     msgDiv.oncontextmenu = (e) => {
                         e.preventDefault();
@@ -1059,7 +1059,7 @@
                     log.scrollTop = log.scrollHeight;
                 }
                 else if (data.action === 'emoji_reaction') {
-                    showEmojiReaction(data.emoji, data.target);
+                    showEmojiReaction(data.emoji, data.target, data.sender, data.sender_avatar, data.target_avatar);
                 }
                 else if (data.action === 'system_msg') {
                     addSystemMsg(data.message);

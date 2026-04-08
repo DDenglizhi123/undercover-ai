@@ -846,6 +846,21 @@ class ChatConsumer(AsyncWebsocketConsumer):
         if not target_channel:
             return
 
+        # Get sender info from room players
+        sender_username = (
+            self.scope["user"].username if self.scope["user"].username else ""
+        )
+
+        # Get sender's avatar from room avatars (channel -> avatar mapping)
+        sender_avatar = room_data["avatars"].get(self.channel_name, "")
+
+        # Get target's avatar
+        target_avatar = ""
+        for ch, name in room_data["players"].items():
+            if name == target_name:
+                target_avatar = room_data["avatars"].get(ch, "")
+                break
+
         await self.channel_layer.group_send(
             self.room_group_name,
             {
@@ -854,6 +869,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     "action": "emoji_reaction",
                     "emoji": emoji,
                     "target": target_name,
+                    "target_avatar": target_avatar,
+                    "sender": sender_username,
+                    "sender_avatar": sender_avatar,
                 },
             },
         )

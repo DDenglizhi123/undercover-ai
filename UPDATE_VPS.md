@@ -2,7 +2,7 @@
 
 ## 1. SSH to VPS
 ```bash
-ssh your_vps_ip
+ssh root@159.223.75.154
 ```
 
 ## 2. Navigate to project directory
