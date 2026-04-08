@@ -7,6 +7,8 @@
 - [ ] Room password/privacy settings
 - [ ] Spectator mode improvements
 - [x] Mobile UI optimization (fixed chat screen button visibility)
+- [x] Blank player speaking order fix (blank never goes first)
+- [x] Blank guess feature (eliminated blank can guess civilian word to win)
 
 ### Medium Priority
 - [ ] More word pairs (expand word database)

@@ -1,5 +1,48 @@
 # Undercover AI - Dev Log
 
+## Session: 2026-04-07
+
+### UI Upgrades
+- Mic button: moved to control bar, bigger size (40x36px), red background when recording
+- Chat messages: added ":" after avatar (e.g., "😀: Hello")
+- Added emoji picker button with common emojis (😀😂😊😍🤔😅👍👎❤️🔥🎉⚠️)
+- Voice message: reduced size (height 24px, width 120px)
+
+### Score System
+- Added player scores stored per room
+- Stars (🌟): 1 point = 1 star
+- Suns (☀️): every 5 stars = 1 sun (clears stars)
+- Win streak (🔥): shows after 3+ consecutive wins
+- Scoring rules:
+  - Civilians win: each civilian gets 1 star
+  - Undercover wins: each undercover/blank gets 2 stars
+  - Blank wins (correct guess): blank gets 3 stars
+- Scores persist across games until room is cleared
+
+### Role Distribution Announcement
+- When game starts, system now announces role counts: "Civilians: X | Undercover: X | Blank: X"
+
+### Game End Identity Reveal
+- When game ends, system now reveals everyone's identity AND their word
+- Format: "Avatar Name: Role → Word"
+
+### Blank Player Speaking Order Fix
+- Modified `start_speaking_round()` to ensure blank player never speaks first
+- After shuffling, if blank is at position 0, swap with position 1
+- This gives blank player context from at least one other player's description
+
+### Blank Guess Feature
+- When a blank player is voted out, they get a chance to guess the civilian word
+- New game phase: `blank_guess` - allows eliminated blank to type guess in chat
+- If guess is correct → blank wins the game 🏆
+- If guess is wrong → game continues normally
+- Added i18n support for guess prompts and results
+- Updated frontend to handle blank_guess phase (enable input, change placeholder)
+
+### Files Modified
+- `chat/consumers.py` - Added speaking order logic, blank guess handling
+- `chat/templates/chat/room.html` - Added blank_guess frontend support
+
 ## Session: 2026-03-30
 
 ### Mobile UI Fix

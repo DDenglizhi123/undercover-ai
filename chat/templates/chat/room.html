@@ -9,6 +9,7 @@
         * { box-sizing: border-box; }
         body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; display: flex; justify-content: center; align-items: center; height: 100dvh; overflow: hidden; }
         .game-container { background-color: var(--card-bg); width: 100%; max-width: 500px; height: 100dvh; max-height: 850px; border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.8); padding: 12px; padding-bottom: max(12px, env(safe-area-inset-bottom)); display: flex; flex-direction: column; position: relative; }
+        .game-container .help-btn { width: 28px; height: 28px; border-radius: 6px; padding: 0; display: flex; align-items: center; justify-content: center; font-size: 14px; background: rgba(233,69,96,0.3); border: none; cursor: pointer; flex-shrink: 0; }
         @media (max-width: 600px) { body { background-color: var(--card-bg); } .game-container { max-width: 100%; max-height: 100%; border-radius: 0; box-shadow: none; padding: 8px; padding-bottom: max(8px, env(safe-area-inset-bottom)); } }
         h1, h2, h3 { color: var(--primary-color); text-align: center; margin-top: 0; }
         .screen { display: flex; flex-direction: column; height: 100%; overflow: hidden; }
@@ -35,6 +36,7 @@
         .me-badge { font-size: 10px; background: white; color: var(--primary-color); border-radius: 4px; padding: 2px 6px; font-weight: 900; margin-bottom: 2px; letter-spacing: 1px; }
         .player-avatar-item .emoji { font-size: 28px; line-height: 1; margin-top: 2px; }
         .player-avatar-item .pname { font-size: 9px; color: #aaa; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 65px; text-align: center; }
+        .player-avatar-item .score-badges { font-size: 10px; display: block; margin-top: 2px; }
         .player-avatar-item.ready .emoji { filter: none; }
         .player-avatar-item.ready::after { content: '✓'; position: absolute; top: -2px; right: -2px; font-size: 10px; background: #2ecc71; color: white; border-radius: 50%; width: 14px; height: 14px; display: flex; align-items: center; justify-content: center; }
         .player-avatar-item.not-ready .emoji { filter: grayscale(0.5); opacity: 0.6; }
@@ -44,12 +46,27 @@
         .player-avatar-item.speaking { background: rgba(233, 69, 96, 0.2); border: 2px solid var(--primary-color); animation: speakerPulse 1.5s infinite; }
         @keyframes speakerPulse { 0%, 100% { box-shadow: 0 0 5px rgba(233,69,96,0.3); } 50% { box-shadow: 0 0 15px rgba(233,69,96,0.6); } }
         .player-avatar-item .vote-badge { position: absolute; bottom: -2px; right: -2px; font-size: 10px; background: var(--primary-color); color: white; border-radius: 50%; min-width: 16px; height: 16px; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+        /* Emoji reaction area */
+        .emoji-reaction-area { background: #16213e; border-radius: 8px; padding: 8px; min-height: 36px; max-height: 108px; margin-bottom: 4px; display: flex; flex-direction: column; gap: 4px; align-items: flex-start; justify-content: flex-start; overflow-y: auto; }
+        .emoji-reaction-area:empty::before { content: 'Click on a player to send emoji'; color: #666; font-size: 12px; font-style: italic; }
+        .emoji-reaction-msg { background: rgba(233, 69, 96, 0.15); padding: 4px 10px; border-radius: 12px; font-size: 13px; animation: emojiMsgFade 5s forwards; width: 100%; white-space: nowrap; overflow: hidden; }
+        @keyframes emojiMsgFade { 0% { opacity: 1; } 80% { opacity: 1; } 100% { opacity: 0.3; } }
+
+        /* Emoji picker popup */
+        .emoji-selector-popup { position: fixed; background: #16213e; border: 2px solid var(--primary-color); border-radius: 12px; padding: 8px; display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        .emoji-selector-popup button { background: transparent; border: none; font-size: 24px; padding: 4px; cursor: pointer; border-radius: 4px; }
+        .emoji-selector-popup button:hover { background: rgba(255,255,255,0.2); }
         .player-avatar-item.votable { cursor: pointer; }
         .player-avatar-item.votable:hover { background: rgba(233, 69, 96, 0.15); }
         .player-avatar-item.voted-for { border: 2px solid var(--accent); background: rgba(249, 168, 38, 0.1); }
 
+        /* Top bar with help + status */
+        .top-bar { display: flex; gap: 8px; align-items: center; margin-bottom: 4px; }
+        .help-bar { display: flex; justify-content: flex-end; flex-shrink: 0; }
+        .help-btn { width: 28px; height: 28px; border-radius: 6px; padding: 0; display: flex; align-items: center; justify-content: center; font-size: 14px; background: var(--accent); color: #1a1a2e; border: none; cursor: pointer; font-weight: bold; }
+
         /* Status bar */
-        .status-bar { display: flex; align-items: center; justify-content: space-between; padding: 4px 8px; background: #0f3460; border-radius: 8px; margin-bottom: 4px; min-height: 32px; font-size: 13px; }
+        .status-bar { display: flex; align-items: center; justify-content: space-between; padding: 4px 8px; background: #0f3460; border-radius: 8px; flex: 1; min-height: 32px; font-size: 13px; }
         .status-bar .status-left { display: flex; align-items: center; gap: 6px; }
         .status-bar .status-right { display: flex; align-items: center; gap: 6px; color: var(--accent); font-weight: bold; }
         .my-word-badge { background: rgba(249,168,38,0.15); padding: 2px 8px; border-radius: 6px; color: var(--accent); font-weight: bold; font-size: 12px; }
@@ -60,12 +77,28 @@
         .chat-msg .msg-avatar { font-size: 16px; margin-right: 4px; }
         .chat-msg.msg-mine { align-self: flex-end; background-color: #1a3a5c; }
         .chat-msg.msg-other { align-self: flex-start; }
-        .chat-msg.system { background-color: transparent; color: var(--accent); text-align: center; width: 100%; font-size: 12px; font-style: italic; white-space: pre-line; align-self: center; }
+        .chat-msg.system { background-color: transparent; color: var(--accent); text-align: center; width: 100%; font-size: 12px; font-style: italic; white-space: pre-line; align-self: center; margin: 2px 0; line-height: 1.3; }
+        .chat-msg .quoted-msg { display: flex; align-items: center; gap: 4px; padding: 4px 8px; background: rgba(249,168,38,0.15); border-left: 3px solid var(--accent); border-radius: 4px; margin-bottom: 4px; }
+        .chat-msg .quoted-sender { font-weight: bold; color: var(--accent); font-size: 12px; }
+        .chat-msg .quoted-text { font-size: 12px; color: #aaa; }
+        .chat-msg .reply-text { color: var(--text-color); }
 
         /* Control bar */
-        .control-bar { display: flex; gap: 4px; margin-top: 3px; flex-shrink: 0; }
-        .control-bar input[type="text"] { flex: 1; margin: 0; padding: 8px; font-size: 14px; }
+        .control-bar { display: flex; gap: 4px; margin-top: 3px; flex-shrink: 0; align-items: center; flex-wrap: wrap; }
+        .control-bar input[type="text"] { flex: 1; margin: 0; padding: 8px; font-size: 14px; min-width: 100px; }
         .control-bar button { width: auto; padding: 8px 10px; margin: 0; font-size: 13px; }
+        .control-bar .btn-row { display: flex; gap: 4px; width: 100%; margin-top: 4px; justify-content: flex-end; }
+        .quote-preview { display: flex; align-items: flex-start; gap: 8px; width: 100%; padding: 8px 10px; background: rgba(249,168,38,0.1); border-left: 4px solid var(--accent); border-radius: 4px; margin-bottom: 4px; }
+        .quote-preview .quote-sender { font-weight: bold; color: var(--accent); font-size: 12px; }
+        .quote-preview .quote-msg { font-size: 12px; color: #ccc; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .quote-preview::before { content: '↫'; color: var(--accent); font-size: 16px; }
+        .btn-emoji { background: transparent; border: 2px solid #0f3460; font-size: 18px; width: 36px; height: 36px; padding: 0; display: flex; align-items: center; justify-content: center; }
+        .btn-emoji:hover { border-color: var(--accent); }
+        .btn-send { width: 40px; height: 36px; font-size: 16px; }
+        #btn-record { width: 100%; max-width: 120px; height: 44px; font-size: 22px; background: #0f3460; display: flex; align-items: center; justify-content: center; border-radius: 8px; }
+        #btn-record.recording { background-color: #ff3b30; animation: pulse 1s infinite; }
+        .recording-indicator { display: none; font-size: 10px; color: #ff3b30; font-weight: bold; margin-left: 2px; }
+        #btn-record.recording + .recording-indicator { display: inline; }
         .action-bar { display: flex; gap: 4px; margin-top: 3px; flex-shrink: 0; }
         .action-bar button { flex: 1; padding: 7px; margin: 0; font-size: 13px; }
         .btn-ready { background-color: #2ecc71; }
@@ -74,13 +107,22 @@
         .btn-restart { background-color: #e74c3c; }
         .btn-end-turn { background-color: var(--accent); color: #1a1a2e; }
         
-        #btn-record.recording { background-color: #ff3b30; animation: pulse 1s infinite; }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
 
-        /* Help */
+        /* Emoji picker */
         .help-btn { width: 100%; padding: 6px; border-radius: 8px; background-color: rgba(233,69,96,0.3); color: #aaa; border: 1px solid rgba(233,69,96,0.3); font-size: 14px; font-weight: bold; cursor: pointer; margin-top: auto; flex-shrink: 0; }
         .help-btn:hover { background-color: rgba(233,69,96,0.5); color: white; }
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 200; display: flex; justify-content: center; align-items: center; animation: fadeIn 0.2s ease-out; }
+        
+        /* Emoji picker */
+        .emoji-picker { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; padding: 8px; background: #0f3460; border-radius: 8px; margin-top: 4px; }
+        .emoji-picker.hidden { display: none; }
+        .emoji-picker button { background: transparent; border: none; font-size: 20px; padding: 4px; cursor: pointer; border-radius: 4px; }
+        .emoji-picker button:hover { background: rgba(255,255,255,0.2); }
+
+        /* Voice message smaller */
+        .chat-msg audio { height: 24px !important; width: 120px !important; margin-top: 2px !important; }
+        
+        /* Help */
         .modal-content { background-color: var(--card-bg); width: 90%; max-width: 380px; max-height: 80vh; border-radius: 15px; padding: 20px; overflow-y: auto; position: relative; }
         .modal-close { position: absolute; top: 10px; right: 15px; background: none; border: none; color: #aaa; font-size: 24px; cursor: pointer; width: auto; padding: 5px; margin: 0; }
         .modal-close:hover { color: white; }
@@ -103,6 +145,7 @@
     </div>
 
     <div class="game-container">
+        
         <!-- 1. Language selection -->
         <div id="screen-language" class="screen" style="justify-content: center;">
             <h1>Language / 语言</h1>
@@ -120,20 +163,26 @@
 
         <!-- 3. Chat screen (main game screen) -->
         <div id="screen-chat" class="screen hidden" style="height: 100%;">
-            <!-- Status bar -->
-            <div class="status-bar">
-                <div class="status-left">
-                    <span id="status-text">Waiting...</span>
+            <!-- Help bar + Status bar -->
+            <div class="top-bar">
+                <div class="help-bar">
+                    <button class="help-btn" onclick="toggleHelp()">?</button>
                 </div>
-                <div class="status-right">
-                    <span id="timer-display" class="hidden">⏱ <span id="timer">60</span>s</span>
-                    <span id="my-word-display" class="my-word-badge hidden"></span>
+                <div class="status-bar">
+                    <div class="status-left">
+                        <span id="status-text">Waiting...</span>
+                    </div>
+                    <div class="status-right">
+                        <span id="timer-display" class="hidden">⏱ <span id="timer">60</span>s</span>
+                        <span id="my-word-display" class="my-word-badge hidden"></span>
+                    </div>
                 </div>
             </div>
             
             <!-- Chat + Player sidebar -->
             <div class="chat-layout">
                 <div class="chat-area">
+                    <div class="emoji-reaction-area" id="emoji-reaction-area"></div>
                     <div class="chat-box" id="chat-log"></div>
                 </div>
                 <div class="player-sidebar" id="player-sidebar"></div>
@@ -141,9 +190,31 @@
             
             <!-- Input bar -->
             <div class="control-bar">
+                <div id="quote-preview" class="quote-preview hidden" onclick="cancelQuote()">
+                    <span id="quote-text"></span>
+                </div>
                 <input type="text" id="chat-input" placeholder="Type a message..." onkeydown="if(event.key==='Enter') document.getElementById('btn-send-chat').click()">
-                <button id="btn-send-chat" data-i18n="sendBtn">Send</button>
-                <button id="btn-record" data-i18n="holdBtn">🎤</button>
+                <button id="btn-send-chat" class="btn-send" data-i18n="sendBtn">➤</button>
+                <button id="btn-emoji" class="btn-emoji" title="Emoji">😀</button>
+                <div class="btn-row">
+                    <button id="btn-record" data-i18n="holdBtn" style="flex:1; max-width:none;">🎤 按住说话 / Hold to speak</button>
+                </div>
+            </div>
+            
+            <!-- Emoji picker (hidden by default) -->
+            <div id="emoji-picker" class="emoji-picker hidden">
+                <button onclick="insertEmoji('😀')">😀</button>
+                <button onclick="insertEmoji('😂')">😂</button>
+                <button onclick="insertEmoji('😊')">😊</button>
+                <button onclick="insertEmoji('😍')">😍</button>
+                <button onclick="insertEmoji('🤔')">🤔</button>
+                <button onclick="insertEmoji('😅')">😅</button>
+                <button onclick="insertEmoji('👍')">👍</button>
+                <button onclick="insertEmoji('👎')">👎</button>
+                <button onclick="insertEmoji('❤️')">❤️</button>
+                <button onclick="insertEmoji('🔥')">🔥</button>
+                <button onclick="insertEmoji('🎉')">🎉</button>
+                <button onclick="insertEmoji('⚠️')">⚠️</button>
             </div>
             
             <!-- Action bar -->
@@ -174,7 +245,9 @@
         let currentSpeaker = '';
         let myVoteTarget = null;
         let currentAlivePlayers = [];
-        let playersData = []; // current player list from server
+        let playersData = [];
+        let emojiTargetName = null;
+        let emojiCooldown = {}; // Track cooldown per target
         window.currentLang = 'en';
 
         const i18n = {
@@ -260,6 +333,157 @@
             toast.style.cssText = "position:fixed; top:20px; left:50%; transform:translateX(-50%); background-color: var(--primary-color); color:white; padding:12px 24px; border-radius:8px; z-index:9999; box-shadow: 0 4px 12px rgba(0,0,0,0.3); font-weight: bold; transition: opacity 0.3s; font-size: 14px;";
             document.body.appendChild(toast);
             setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 3000);
+        }
+
+        function toggleEmojiPicker() {
+            document.getElementById('emoji-picker').classList.toggle('hidden');
+        }
+
+        function insertEmoji(emoji) {
+            const input = document.getElementById('chat-input');
+            input.value += emoji;
+            input.focus();
+            document.getElementById('emoji-picker').classList.add('hidden');
+        }
+
+        function sendEmojiReaction(targetName) {
+            if (!chatSocket || chatSocket.readyState !== WebSocket.OPEN) return;
+            
+            const emojis = ['👍', '👏', '😂', '❤️', '🔥', '😮'];
+            const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
+            
+            chatSocket.send(JSON.stringify({
+                'action': 'emoji_reaction',
+                'emoji': randomEmoji,
+                'target': targetName
+            }));
+        }
+
+        function showEmojiReaction(emoji, targetName) {
+            const area = document.getElementById('emoji-reaction-area');
+            if (area) {
+                // Keep only 3 messages
+                while (area.children.length >= 3) {
+                    area.removeChild(area.firstChild);
+                }
+                
+                const now = new Date();
+                const timeStr = now.toLocaleTimeString(window.currentLang === 'zh' ? 'zh-CN' : 'en-US', { hour: '2-digit', minute: '2-digit' });
+                
+                const msg = document.createElement('div');
+                msg.className = 'emoji-reaction-msg';
+                const isZh = window.currentLang === 'zh';
+                msg.textContent = isZh 
+                    ? `${timeStr} ${myUsername} 发送了 ${emoji} 给 ${targetName}`
+                    : `${timeStr} ${myUsername} sent a ${emoji} to ${targetName}`;
+                area.insertBefore(msg, area.firstChild);
+            }
+        }
+
+        let emojiRateLimit = 0;
+        const EMOJI_RATE_LIMIT = 3;
+        const EMOJI_RATE_WINDOW = 15000; // 15 seconds
+
+        function showEmojiSelector(event, targetName) {
+            // Check global rate limit
+            const now = Date.now();
+            if (emojiRateLimit >= EMOJI_RATE_LIMIT) {
+                showToast(window.currentLang === 'zh' ? '发送太快了，稍后再试' : 'Too fast, wait before sending again');
+                return;
+            }
+            
+            emojiTargetName = targetName;
+            
+            // Remove existing popup
+            const existing = document.querySelector('.emoji-selector-popup');
+            if (existing) existing.remove();
+            
+            const popup = document.createElement('div');
+            popup.className = 'emoji-selector-popup';
+            popup.style.left = event.clientX + 'px';
+            popup.style.top = event.clientY + 'px';
+            
+            const emojis = ['👍','👎','🫂','🧐','😂','🥺','🙇','🔪','💣','😎','😢','😩'];
+            emojis.forEach(e => {
+                const btn = document.createElement('button');
+                btn.textContent = e;
+                btn.onclick = (ev) => {
+                    ev.stopPropagation();
+                    sendSelectedEmoji(targetName, e);
+                    popup.remove();
+                };
+                popup.appendChild(btn);
+            });
+            
+            document.body.appendChild(popup);
+            
+            // Close on click outside
+            const closePopup = (e) => {
+                if (!popup.contains(e.target)) {
+                    popup.remove();
+                    document.removeEventListener('click', closePopup);
+                }
+            };
+            setTimeout(() => document.addEventListener('click', closePopup), 100);
+        }
+
+        function sendSelectedEmoji(targetName, emoji) {
+            // Set global rate limit
+            emojiRateLimit++;
+            setTimeout(() => { emojiRateLimit = Math.max(0, emojiRateLimit - 1); }, EMOJI_RATE_WINDOW);
+             
+            if (!chatSocket || chatSocket.readyState !== WebSocket.OPEN) return;
+            
+            chatSocket.send(JSON.stringify({
+                'action': 'emoji_reaction',
+                'emoji': emoji,
+                'target': targetName
+            }));
+        }
+
+        let quotedMsg = null;
+        
+        function quoteMessage(sender, message) {
+            // Check if chatSocket is ready
+            if (!chatSocket || chatSocket.readyState !== WebSocket.OPEN) return;
+            
+            // Voting phase: no quoting allowed
+            if (gameStatus === 'voting') return;
+            
+            // Speaking phase: only current speaker can quote
+            if (gameStatus === 'speaking') {
+                if (myUsername !== currentSpeaker) return;
+            }
+            // Waiting phase: anyone can quote anyone
+            
+            // Extract the actual reply message - don't nest quotes
+            let actualMessage = message;
+            const quoteMatch = message.match(/^(🐵|🐯): .+ 「[^:]+: .+」$/);
+            if (quoteMatch) {
+                const lastQuoteStart = message.lastIndexOf('「');
+                if (lastQuoteStart > 0) {
+                    actualMessage = message.substring(5, lastQuoteStart).trim();
+                    if (!actualMessage) {
+                        actualMessage = message;
+                    }
+                }
+            }
+            
+            // Store quoted message and show preview - get avatar from playersData
+            const player = playersData.find(p => p.name === sender);
+            const avatar = player ? player.avatar : sender;
+            quotedMsg = { sender: sender, message: actualMessage, avatar };
+            const preview = document.getElementById('quote-preview');
+            const quoteText = document.getElementById('quote-text');
+            const isZh = window.currentLang === 'zh';
+            quoteText.innerHTML = `<span class="quote-sender">${sender}</span> <span class="quote-msg">${actualMessage.substring(0, 50)}${actualMessage.length > 50 ? '...' : ''}</span>`;
+            preview.classList.remove('hidden');
+            document.getElementById('chat-input').focus();
+        }
+        
+        function cancelQuote() {
+            quotedMsg = null;
+            document.getElementById('quote-preview').classList.add('hidden');
         }
 
         function addSystemMsg(msg) {
@@ -390,7 +614,16 @@
                     if (myVoteTarget === p.name) {
                         item.classList.add('voted-for');
                     }
+                    item.style.cursor = 'pointer';
                     item.onclick = () => handleAvatarVoteClick(p.name);
+                }
+                
+                // Allow clicking on alive players to send emoji reaction (not during voting)
+                if (p.is_alive && p.name !== myUsername && !isSpectator && gameStatus !== 'voting') {
+                    item.style.cursor = 'pointer';
+                    item.onclick = (e) => {
+                        showEmojiSelector(e, p.name);
+                    };
                 }
                 
                 let html = '';
@@ -399,6 +632,15 @@
                     html += `<div class="me-badge">${meLabel}</div>`;
                 }
                 html += `<span class="emoji">${p.avatar}</span><span class="pname">${p.name}</span>`;
+                
+                // Show stars and suns
+                if (p.stars > 0 || p.suns > 0 || p.win_streak >= 3) {
+                    let scoreHtml = '';
+                    if (p.suns > 0) scoreHtml += '☀️'.repeat(p.suns);
+                    if (p.stars > 0) scoreHtml += '🌟'.repeat(p.stars);
+                    if (p.win_streak >= 3) scoreHtml += '🔥';
+                    html += `<span class="score-badges">${scoreHtml}</span>`;
+                }
                 
                 if (gameStatus === 'voting' && voteCounts && voteCounts[p.name]) {
                     html += `<span class="vote-badge">${voteCounts[p.name]}</span>`;
@@ -419,13 +661,6 @@
                 });
                 sidebar.appendChild(othersContainer);
             }
-            
-            // Add help button at the bottom of sidebar
-            const helpBtn = document.createElement('button');
-            helpBtn.className = 'help-btn';
-            helpBtn.textContent = '?';
-            helpBtn.onclick = toggleHelp;
-            sidebar.appendChild(helpBtn);
         }
 
         function handleAvatarVoteClick(targetName) {
@@ -448,9 +683,13 @@
             input.disabled = false;
             sendBtn.disabled = false;
             if (mediaRecorder) document.getElementById('btn-record').disabled = false;
-            input.placeholder = (gameStatus === 'waiting') 
-                ? i18n[window.currentLang].placeholderFreeChat 
-                : i18n[window.currentLang].placeholderSpeak;
+            if (gameStatus === 'blank_guess') {
+                input.placeholder = window.currentLang === 'zh' ? '输入你的猜测...' : 'Enter your guess...';
+            } else {
+                input.placeholder = (gameStatus === 'waiting') 
+                    ? i18n[window.currentLang].placeholderFreeChat 
+                    : i18n[window.currentLang].placeholderSpeak;
+            }
         }
 
         function disableChatInput() {
@@ -575,6 +814,8 @@
                         disableChatInput();
                     } else if (gameStatus === 'waiting') {
                         enableChatInput(); // free chat before game
+                    } else if (gameStatus === 'blank_guess') {
+                        enableChatInput(); // blank can type guess
                     } else {
                         disableChatInput(); // in game, wait for your turn
                     }
@@ -607,6 +848,7 @@
                 else if (data.action === 'game_started') {
                     isSpectator = false;
                     gameStatus = 'speaking';
+                    cancelQuote(); // Clear any pending quote
                     
                     // Show word in status bar
                     const wordDisplay = document.getElementById('my-word-display');
@@ -679,6 +921,7 @@
                         document.getElementById('timer').textContent = voteTimeLeft;
                         if (voteTimeLeft <= 0) {
                             clearInterval(voteTimer);
+                            document.getElementById('timer-display').classList.add('hidden');
                         }
                     }, 1000);
                 }
@@ -698,6 +941,7 @@
                     gameStatus = 'waiting';
                     isReady = false;
                     myVoteTarget = null;
+                    cancelQuote();
                     
                     addSystemMsg(data.message);
                     
@@ -732,7 +976,23 @@
                     const avatar = data.avatar || '❓';
                     const isMine = data.sender === myUsername;
                     const cls = isMine ? 'chat-msg msg-mine' : 'chat-msg msg-other';
-                    log.insertAdjacentHTML('beforeend', `<div class="${cls}"><span class="msg-avatar">${avatar}</span> ${data.msg}</div>`);
+                    const msgDiv = document.createElement('div');
+                    msgDiv.className = cls;
+                    
+                    // Check if message contains a quote pattern: 🐵: reply 「avatar: quoted message」
+                    const quoteMatch = data.msg.match(/^(🐵|🐯): (.+) 「([^:]+): (.+?)」$/);
+                    if (quoteMatch) {
+                        const [, emoji, replyMsg, quotedSender, quotedText] = quoteMatch;
+                        msgDiv.innerHTML = `<span class="msg-avatar">${avatar}</span>: <span class="reply-text">${replyMsg}</span> <span class="quoted-msg">「<span class="quoted-sender">${quotedSender}:</span><span class="quoted-text">${quotedText}</span>」</span>`;
+                    } else {
+                        msgDiv.innerHTML = `<span class="msg-avatar">${avatar}</span>: ${data.msg}`;
+                    }
+                    
+                    msgDiv.oncontextmenu = (e) => {
+                        e.preventDefault();
+                        quoteMessage(data.sender, data.msg);
+                    };
+                    log.appendChild(msgDiv);
                     log.scrollTop = log.scrollHeight;
                 }
                 else if (data.action === 'new_chat_audio') {
@@ -740,11 +1000,40 @@
                     const avatar = data.avatar || '❓';
                     const isMine = data.sender === myUsername;
                     const cls = isMine ? 'chat-msg msg-mine' : 'chat-msg msg-other';
-                    log.insertAdjacentHTML('beforeend', `<div class="${cls}"><span class="msg-avatar">${avatar}</span><br><audio controls src="${data.audio_data}" style="height: 30px; width: 180px; margin-top: 5px;"></audio></div>`);
+                    const audioMsg = `[Voice Message]`;
+                    const msgDiv = document.createElement('div');
+                    msgDiv.className = cls;
+                    msgDiv.innerHTML = `<span class="msg-avatar">${avatar}</span>:<br><audio controls src="${data.audio_data}" style="height: 24px; width: 120px; margin-top: 2px;"></audio>`;
+                    msgDiv.oncontextmenu = (e) => {
+                        e.preventDefault();
+                        quoteMessage(data.sender, audioMsg);
+                    };
+                    log.appendChild(msgDiv);
                     log.scrollTop = log.scrollHeight;
+                }
+                else if (data.action === 'emoji_reaction') {
+                    showEmojiReaction(data.emoji, data.target);
                 }
                 else if (data.action === 'system_msg') {
                     addSystemMsg(data.message);
+                }
+                else if (data.action === 'blank_guess_phase') {
+                    // Show the guess prompt
+                    addSystemMsg(data.message);
+                    
+                    // If I am the blank player, enable input for guessing
+                    if (data.blank_name === myUsername) {
+                        gameStatus = 'blank_guess';
+                        enableChatInput();
+                        showToast(window.currentLang === 'zh' ? '轮到你猜测了！' : 'Your turn to guess!');
+                    } else {
+                        // Others wait
+                        gameStatus = 'blank_guess';
+                        disableChatInput();
+                    }
+                    
+                    updateStatusBar();
+                    updateActionButtons();
                 }
                 else if (data.action === 'error') {
                     showToast(data.message);
@@ -827,10 +1116,22 @@
         document.getElementById('btn-send-chat').onclick = () => {
             const input = document.getElementById('chat-input');
             if (input.value.trim() !== "") {
-                chatSocket.send(JSON.stringify({'action': 'chat_msg', 'msg': input.value}));
+                // If in blank guess phase, send as guess
+                if (gameStatus === 'blank_guess') {
+                    chatSocket.send(JSON.stringify({'action': 'blank_guess', 'guess': input.value}));
+                } else {
+                    let msg = input.value;
+                    if (quotedMsg) {
+                        msg = `🐵: ${msg} 「${quotedMsg.avatar}: ${quotedMsg.message}」`;
+                        cancelQuote();
+                    }
+                    chatSocket.send(JSON.stringify({'action': 'chat_msg', 'msg': msg}));
+                }
                 input.value = '';
             }
         };
+
+        document.getElementById('btn-emoji').onclick = toggleEmojiPicker;
 
         document.getElementById('btn-end-turn').onclick = () => {
             if (isMyTurn) {
