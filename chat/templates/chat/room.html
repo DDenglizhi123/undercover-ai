@@ -82,6 +82,8 @@
         .chat-msg .quoted-sender { font-weight: bold; color: var(--accent); font-size: 12px; }
         .chat-msg .quoted-text { font-size: 12px; color: #aaa; }
         .chat-msg .reply-text { color: var(--text-color); }
+        .chat-msg .reply-btn { cursor: pointer; margin-left: 8px; opacity: 0.6; font-size: 14px; transition: opacity 0.2s; }
+        .chat-msg .reply-btn:hover { opacity: 1; }
 
         /* Control bar */
         .control-bar { display: flex; gap: 4px; margin-top: 3px; flex-shrink: 0; align-items: center; flex-wrap: wrap; }
@@ -398,10 +400,29 @@
             const existing = document.querySelector('.emoji-selector-popup');
             if (existing) existing.remove();
             
+            // Get the clicked avatar element and position popup to the right
+            const avatarRect = event.target.closest('.player-avatar-item').getBoundingClientRect();
             const popup = document.createElement('div');
             popup.className = 'emoji-selector-popup';
-            popup.style.left = event.clientX + 'px';
-            popup.style.top = event.clientY + 'px';
+            
+            // Define popup dimensions for boundary calculation
+            const popupWidth = 240;
+            const popupHeight = 120;
+            
+            // Position on the left side of the avatar
+            let leftPos = avatarRect.left - popupWidth - 10;
+            let topPos = avatarRect.top;
+            
+            // Adjust if popup would go off-screen
+            if (leftPos < 0) {
+                leftPos = avatarRect.right + 10;
+            }
+            if (topPos + popupHeight > window.innerHeight) {
+                topPos = window.innerHeight - popupHeight - 10;
+            }
+            
+            popup.style.left = leftPos + 'px';
+            popup.style.top = topPos + 'px';
             
             const emojis = ['👍','👎','🫂','🧐','😂','🥺','🙇','🔪','💣','😎','😢','😩'];
             emojis.forEach(e => {
@@ -981,12 +1002,26 @@
                     
                     // Check if message contains a quote pattern: 🐵: reply 「avatar: quoted message」
                     const quoteMatch = data.msg.match(/^(🐵|🐯): (.+) 「([^:]+): (.+?)」$/);
+                    let msgContent;
                     if (quoteMatch) {
                         const [, emoji, replyMsg, quotedSender, quotedText] = quoteMatch;
-                        msgDiv.innerHTML = `<span class="msg-avatar">${avatar}</span>: <span class="reply-text">${replyMsg}</span> <span class="quoted-msg">「<span class="quoted-sender">${quotedSender}:</span><span class="quoted-text">${quotedText}</span>」</span>`;
+                        msgContent = `<span class="msg-avatar">${avatar}</span>: <span class="reply-text">${replyMsg}</span> <span class="quoted-msg">「<span class="quoted-sender">${quotedSender}:</span><span class="quoted-text">${quotedText}</span>」</span>`;
                     } else {
-                        msgDiv.innerHTML = `<span class="msg-avatar">${avatar}</span>: ${data.msg}`;
+                        msgContent = `<span class="msg-avatar">${avatar}</span>: ${data.msg}`;
                     }
+                    
+                    // Add reply button for mobile users
+                    const replyBtn = document.createElement('span');
+                    replyBtn.className = 'reply-btn';
+                    replyBtn.innerHTML = '↩️';
+                    replyBtn.title = window.currentLang === 'zh' ? '回复' : 'Reply';
+                    replyBtn.onclick = (e) => {
+                        e.stopPropagation();
+                        quoteMessage(data.sender, data.msg);
+                    };
+                    
+                    msgDiv.innerHTML = msgContent;
+                    msgDiv.appendChild(replyBtn);
                     
                     msgDiv.oncontextmenu = (e) => {
                         e.preventDefault();
@@ -1004,6 +1039,18 @@
                     const msgDiv = document.createElement('div');
                     msgDiv.className = cls;
                     msgDiv.innerHTML = `<span class="msg-avatar">${avatar}</span>:<br><audio controls src="${data.audio_data}" style="height: 24px; width: 120px; margin-top: 2px;"></audio>`;
+                    
+                    // Add reply button for mobile users
+                    const replyBtn = document.createElement('span');
+                    replyBtn.className = 'reply-btn';
+                    replyBtn.innerHTML = '↩️';
+                    replyBtn.title = window.currentLang === 'zh' ? '回复' : 'Reply';
+                    replyBtn.onclick = (e) => {
+                        e.stopPropagation();
+                        quoteMessage(data.sender, audioMsg);
+                    };
+                    msgDiv.appendChild(replyBtn);
+                    
                     msgDiv.oncontextmenu = (e) => {
                         e.preventDefault();
                         quoteMessage(data.sender, audioMsg);
