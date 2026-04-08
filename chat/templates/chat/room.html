@@ -34,6 +34,7 @@
         .sidebar-others-group { background: rgba(255,255,255,0.05); border-radius: 12px; padding: 4px; display: flex; flex-direction: column; gap: 6px; }
         .player-avatar-item { display: flex; flex-direction: column; align-items: center; padding: 4px 2px; border-radius: 8px; cursor: default; position: relative; transition: all 0.3s; }
         .me-badge { font-size: 10px; background: white; color: var(--primary-color); border-radius: 4px; padding: 2px 6px; font-weight: 900; margin-bottom: 2px; letter-spacing: 1px; }
+        .host-badge { font-size: 9px; background: var(--accent); color: #1a1a2e; border-radius: 4px; padding: 2px 4px; font-weight: bold; margin-bottom: 2px; }
         .player-avatar-item .emoji { font-size: 28px; line-height: 1; margin-top: 2px; }
         .player-avatar-item .pname { font-size: 9px; color: #aaa; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 65px; text-align: center; }
         .player-avatar-item .score-badges { font-size: 10px; display: block; margin-top: 2px; }
@@ -116,7 +117,7 @@
         .help-btn:hover { background-color: rgba(233,69,96,0.5); color: white; }
         
         /* Emoji picker */
-        .emoji-picker { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; padding: 8px; background: #0f3460; border-radius: 8px; margin-top: 4px; }
+        .emoji-picker { display: grid; grid-template-columns: repeat(12, 1fr); gap: 2px; padding: 8px; background: #0f3460; border-radius: 8px; margin-top: 4px; max-height: 200px; overflow-y: auto; }
         .emoji-picker.hidden { display: none; }
         .emoji-picker button { background: transparent; border: none; font-size: 20px; padding: 4px; cursor: pointer; border-radius: 4px; }
         .emoji-picker button:hover { background: rgba(255,255,255,0.2); }
@@ -206,17 +207,305 @@
             <!-- Emoji picker (hidden by default) -->
             <div id="emoji-picker" class="emoji-picker hidden">
                 <button onclick="insertEmoji('😀')">😀</button>
-                <button onclick="insertEmoji('😂')">😂</button>
-                <button onclick="insertEmoji('😊')">😊</button>
-                <button onclick="insertEmoji('😍')">😍</button>
-                <button onclick="insertEmoji('🤔')">🤔</button>
+                <button onclick="insertEmoji('😃')">😃</button>
+                <button onclick="insertEmoji('😄')">😄</button>
+                <button onclick="insertEmoji('😁')">😁</button>
                 <button onclick="insertEmoji('😅')">😅</button>
+                <button onclick="insertEmoji('😂')">😂</button>
+                <button onclick="insertEmoji('🤣')">🤣</button>
+                <button onclick="insertEmoji('😊')">😊</button>
+                <button onclick="insertEmoji('😇')">😇</button>
+                <button onclick="insertEmoji('😍')">😍</button>
+                <button onclick="insertEmoji('🤩')">🤩</button>
+                <button onclick="insertEmoji('😘')">😘</button>
+                <button onclick="insertEmoji('🥰')">🥰</button>
+                <button onclick="insertEmoji('😋')">😋</button>
+                <button onclick="insertEmoji('😛')">😛</button>
+                <button onclick="insertEmoji('😜')">😜</button>
+                <button onclick="insertEmoji('🤪')">🤪</button>
+                <button onclick="insertEmoji('😝')">😝</button>
+                <button onclick="insertEmoji('🤔')">🤔</button>
+                <button onclick="insertEmoji('🤨')">🤨</button>
+                <button onclick="insertEmoji('😐')">😐</button>
+                <button onclick="insertEmoji('😑')">😑</button>
+                <button onclick="insertEmoji('😶')">😶</button>
+                <button onclick="insertEmoji('😏')">😏</button>
+                <button onclick="insertEmoji('😒')">😒</button>
+                <button onclick="insertEmoji('🙄')">🙄</button>
+                <button onclick="insertEmoji('😬')">😬</button>
+                <button onclick="insertEmoji('🤥')">🤥</button>
+                <button onclick="insertEmoji('😌')">😌</button>
+                <button onclick="insertEmoji('😔')">😔</button>
+                <button onclick="insertEmoji('😪')">😪</button>
+                <button onclick="insertEmoji('🤤')">🤤</button>
+                <button onclick="insertEmoji('😴')">😴</button>
+                <button onclick="insertEmoji('😷')">😷</button>
+                <button onclick="insertEmoji('🤒')">🤒</button>
+                <button onclick="insertEmoji('🤕')">🤕</button>
+                <button onclick="insertEmoji('🤢')">🤢</button>
+                <button onclick="insertEmoji('🤮')">🤮</button>
+                <button onclick="insertEmoji('🤧')">🤧</button>
+                <button onclick="insertEmoji('🥵')">🥵</button>
+                <button onclick="insertEmoji('🥶')">🥶</button>
+                <button onclick="insertEmoji('🥴')">🥴</button>
+                <button onclick="insertEmoji('😵')">😵</button>
+                <button onclick="insertEmoji('🤯')">🤯</button>
+                <button onclick="insertEmoji('🤠')">🤠</button>
+                <button onclick="insertEmoji('🥳')">🥳</button>
+                <button onclick="insertEmoji('😎')">😎</button>
+                <button onclick="insertEmoji('🤓')">🤓</button>
+                <button onclick="insertEmoji('🧐')">🧐</button>
+                <button onclick="insertEmoji('😕')">😕</button>
+                <button onclick="insertEmoji('😟')">😟</button>
+                <button onclick="insertEmoji('🙁')">🙁</button>
+                <button onclick="insertEmoji('😮')">😮</button>
+                <button onclick="insertEmoji('😯')">😯</button>
+                <button onclick="insertEmoji('😲')">😲</button>
+                <button onclick="insertEmoji('😳')">😳</button>
+                <button onclick="insertEmoji('🥺')">🥺</button>
+                <button onclick="insertEmoji('😦')">😦</button>
+                <button onclick="insertEmoji('😧')">😧</button>
+                <button onclick="insertEmoji('😨')">😨</button>
+                <button onclick="insertEmoji('😰')">😰</button>
+                <button onclick="insertEmoji('😥')">😥</button>
+                <button onclick="insertEmoji('😢')">😢</button>
+                <button onclick="insertEmoji('😭')">😭</button>
+                <button onclick="insertEmoji('😱')">😱</button>
+                <button onclick="insertEmoji('😖')">😖</button>
+                <button onclick="insertEmoji('😣')">😣</button>
+                <button onclick="insertEmoji('😞')">😞</button>
+                <button onclick="insertEmoji('😓')">😓</button>
+                <button onclick="insertEmoji('😩')">😩</button>
+                <button onclick="insertEmoji('😫')">😫</button>
+                <button onclick="insertEmoji('🥱')">🥱</button>
+                <button onclick="insertEmoji('😤')">😤</button>
+                <button onclick="insertEmoji('😡')">😡</button>
+                <button onclick="insertEmoji('😠')">😠</button>
+                <button onclick="insertEmoji('🤬')">🤬</button>
+                <button onclick="insertEmoji('😈')">😈</button>
+                <button onclick="insertEmoji('👿')">👿</button>
+                <button onclick="insertEmoji('💀')">💀</button>
+                <button onclick="insertEmoji('☠️')">☠️</button>
+                <button onclick="insertEmoji('💩')">💩</button>
+                <button onclick="insertEmoji('🤡')">🤡</button>
+                <button onclick="insertEmoji('👹')">👹</button>
+                <button onclick="insertEmoji('👺')">👺</button>
+                <button onclick="insertEmoji('👻')">👻</button>
+                <button onclick="insertEmoji('👽')">👽</button>
+                <button onclick="insertEmoji('👾')">👾</button>
+                <button onclick="insertEmoji('🤖')">🤖</button>
+                <button onclick="insertEmoji('👋')">👋</button>
+                <button onclick="insertEmoji('🤚')">🤚</button>
+                <button onclick="insertEmoji('🖐️')">🖐️</button>
+                <button onclick="insertEmoji('✋')">✋</button>
+                <button onclick="insertEmoji('🖖')">🖖</button>
+                <button onclick="insertEmoji('👌')">👌</button>
+                <button onclick="insertEmoji('🤏')">🤏</button>
+                <button onclick="insertEmoji('✌️')">✌️</button>
+                <button onclick="insertEmoji('🤞')">🤞</button>
+                <button onclick="insertEmoji('🤟')">🤟</button>
+                <button onclick="insertEmoji('🤘')">🤘</button>
+                <button onclick="insertEmoji('🤙')">🤙</button>
+                <button onclick="insertEmoji('👈')">👈</button>
+                <button onclick="insertEmoji('👉')">👉</button>
+                <button onclick="insertEmoji('👆')">👆</button>
+                <button onclick="insertEmoji('🖕')">🖕</button>
+                <button onclick="insertEmoji('👇')">👇</button>
                 <button onclick="insertEmoji('👍')">👍</button>
                 <button onclick="insertEmoji('👎')">👎</button>
+                <button onclick="insertEmoji('✊')">✊</button>
+                <button onclick="insertEmoji('👊')">👊</button>
+                <button onclick="insertEmoji('🤛')">🤛</button>
+                <button onclick="insertEmoji('🤜')">🤜</button>
+                <button onclick="insertEmoji('👏')">👏</button>
+                <button onclick="insertEmoji('🙌')">🙌</button>
+                <button onclick="insertEmoji('👐')">👐</button>
+                <button onclick="insertEmoji('🤲')">🤲</button>
+                <button onclick="insertEmoji('🙏')">🙏</button>
+                <button onclick="insertEmoji('🤝')">🤝</button>
+                <button onclick="insertEmoji('💪')">💪</button>
+                <button onclick="insertEmoji('🧠')">🧠</button>
+                <button onclick="insertEmoji('🫀')">🫀</button>
+                <button onclick="insertEmoji('🦴')">🦴</button>
+                <button onclick="insertEmoji('👀')">👀</button>
+                <button onclick="insertEmoji('👁️')">👁️</button>
+                <button onclick="insertEmoji('👅')">👅</button>
+                <button onclick="insertEmoji('👄')">👄</button>
+                <button onclick="insertEmoji('👶')">👶</button>
+                <button onclick="insertEmoji('🧒')">🧒</button>
+                <button onclick="insertEmoji('👦')">👦</button>
+                <button onclick="insertEmoji('👧')">👧</button>
+                <button onclick="insertEmoji('🧑')">🧑</button>
+                <button onclick="insertEmoji('👱')">👱</button>
+                <button onclick="insertEmoji('👨')">👨</button>
+                <button onclick="insertEmoji('👩')">👩</button>
+                <button onclick="insertEmoji('🧔')">🧔</button>
+                <button onclick="insertEmoji('👴')">👴</button>
+                <button onclick="insertEmoji('👵')">👵</button>
+                <button onclick="insertEmoji('🙍')">🙍</button>
+                <button onclick="insertEmoji('🙎')">🙎</button>
+                <button onclick="insertEmoji('🙅')">🙅</button>
+                <button onclick="insertEmoji('🙆')">🙆</button>
+                <button onclick="insertEmoji('💁')">💁</button>
+                <button onclick="insertEmoji('🙋')">🙋</button>
+                <button onclick="insertEmoji('🧏')">🧏</button>
+                <button onclick="insertEmoji('🙇')">🙇</button>
+                <button onclick="insertEmoji('🤦')">🤦</button>
+                <button onclick="insertEmoji('🤷')">🤷</button>
+                <button onclick="insertEmoji('👮')">👮</button>
+                <button onclick="insertEmoji('🕵️')">🕵️</button>
+                <button onclick="insertEmoji('💂')">💂</button>
+                <button onclick="insertEmoji('🥷')">🥷</button>
+                <button onclick="insertEmoji('👷')">👷</button>
+                <button onclick="insertEmoji('🤴')">🤴</button>
+                <button onclick="insertEmoji('👸')">👸</button>
+                <button onclick="insertEmoji('👳')">👳</button>
+                <button onclick="insertEmoji('👲')">👲</button>
+                <button onclick="insertEmoji('🧕')">🧕</button>
+                <button onclick="insertEmoji('🤵')">🤵</button>
+                <button onclick="insertEmoji('👰')">👰</button>
+                <button onclick="insertEmoji('🤰')">🤰</button>
+                <button onclick="insertEmoji('🤱')">🤱</button>
+                <button onclick="insertEmoji('👼')">👼</button>
+                <button onclick="insertEmoji('🎅')">🎅</button>
+                <button onclick="insertEmoji('🤶')">🤶</button>
+                <button onclick="insertEmoji('🦸')">🦸</button>
+                <button onclick="insertEmoji('🦹')">🦹</button>
+                <button onclick="insertEmoji('🧙')">🧙</button>
+                <button onclick="insertEmoji('🧚')">🧚</button>
+                <button onclick="insertEmoji('🧛')">🧛</button>
+                <button onclick="insertEmoji('🧜')">🧜</button>
+                <button onclick="insertEmoji('🧝')">🧝</button>
+                <button onclick="insertEmoji('💆')">💆</button>
+                <button onclick="insertEmoji('💇')">💇</button>
+                <button onclick="insertEmoji('🚶')">🚶</button>
+                <button onclick="insertEmoji('🧍')">🧍</button>
+                <button onclick="insertEmoji('🧎')">🧎</button>
+                <button onclick="insertEmoji('🏃')">🏃</button>
+                <button onclick="insertEmoji('💃')">💃</button>
+                <button onclick="insertEmoji('🕺')">🕺</button>
+                <button onclick="insertEmoji('🕴️')">🕴️</button>
+                <button onclick="insertEmoji('👯')">👯</button>
+                <button onclick="insertEmoji('🧖')">🧖</button>
+                <button onclick="insertEmoji('🧗')">🧗</button>
+                <button onclick="insertEmoji('🤸')">🤸</button>
+                <button onclick="insertEmoji('🏌️')">🏌️</button>
+                <button onclick="insertEmoji('🏇')">🏇</button>
+                <button onclick="insertEmoji('⛷️')">⛷️</button>
+                <button onclick="insertEmoji('🏂')">🏂</button>
+                <button onclick="insertEmoji('🏋️')">🏋️</button>
+                <button onclick="insertEmoji('🤽')">🤽</button>
+                <button onclick="insertEmoji('🤾')">🤾</button>
+                <button onclick="insertEmoji('🤺')">🤺</button>
+                <button onclick="insertEmoji('⛹️')">⛹️</button>
+                <button onclick="insertEmoji('🏊')">🏊</button>
+                <button onclick="insertEmoji('🚣')">🚣</button>
+                <button onclick="insertEmoji('🧘')">🧘</button>
+                <button onclick="insertEmoji('🛀')">🛀</button>
+                <button onclick="insertEmoji('🛌')">🛌</button>
+                <button onclick="insertEmoji('👭')">👭</button>
+                <button onclick="insertEmoji('👫')">👫</button>
+                <button onclick="insertEmoji('👬')">👬</button>
+                <button onclick="insertEmoji('💏')">💏</button>
+                <button onclick="insertEmoji('💑')">💑</button>
+                <button onclick="insertEmoji('👪')">👪</button>
+                <button onclick="insertEmoji('👨‍👩‍👦')">👨‍👩‍👦</button>
+                <button onclick="insertEmoji('🗣️')">🗣️</button>
+                <button onclick="insertEmoji('👤')">👤</button>
+                <button onclick="insertEmoji('👥')">👥</button>
+                <button onclick="insertEmoji('🫂')">🫂</button>
+                <button onclick="insertEmoji('👋')">👋</button>
                 <button onclick="insertEmoji('❤️')">❤️</button>
+                <button onclick="insertEmoji('💔')">💔</button>
+                <button onclick="insertEmoji('💕')">💕</button>
+                <button onclick="insertEmoji('💖')">💖</button>
+                <button onclick="insertEmoji('💗')">💗</button>
+                <button onclick="insertEmoji('💓')">💓</button>
+                <button onclick="insertEmoji('💞')">💞</button>
+                <button onclick="insertEmoji('💘')">💘</button>
+                <button onclick="insertEmoji('💝')">💝</button>
+                <button onclick="insertEmoji('💢')">💢</button>
+                <button onclick="insertEmoji('💥')">💥</button>
+                <button onclick="insertEmoji('💫')">💫</button>
+                <button onclick="insertEmoji('💦')">💦</button>
+                <button onclick="insertEmoji('💨')">💨</button>
+                <button onclick="insertEmoji('💣')">💣</button>
+                <button onclick="insertEmoji('💬')">💬</button>
+                <button onclick="insertEmoji('👁️‍🗨️')">👁️‍🗨️</button>
+                <button onclick="insertEmoji('🗯️')">🗯️</button>
+                <button onclick="insertEmoji('💭')">💭</button>
+                <button onclick="insertEmoji('💤')">💤</button>
                 <button onclick="insertEmoji('🔥')">🔥</button>
+                <button onclick="insertEmoji('✨')">✨</button>
+                <button onclick="insertEmoji('🌟')">🌟</button>
+                <button onclick="insertEmoji('💫')">💫</button>
+                <button onclick="insertEmoji('💥')">💥</button>
+                <button onclick="insertEmoji('☀️')">☀️</button>
+                <button onclick="insertEmoji('🌤️')">🌤️</button>
+                <button onclick="insertEmoji('⛅')">⛅</button>
+                <button onclick="insertEmoji('🌥️')">🌥️</button>
+                <button onclick="insertEmoji('☁️')">☁️</button>
+                <button onclick="insertEmoji('🌧️')">🌧️</button>
+                <button onclick="insertEmoji('⛈️')">⛈️</button>
+                <button onclick="insertEmoji('🌩️')">🌩️</button>
+                <button onclick="insertEmoji('🌨️')">🌨️</button>
+                <button onclick="insertEmoji('❄️')">❄️</button>
+                <button onclick="insertEmoji('☃️')">☃️</button>
+                <button onclick="insertEmoji('🌪️')">🌪️</button>
+                <button onclick="insertEmoji('🌈')">🌈</button>
+                <button onclick="insertEmoji('☂️')">☂️</button>
+                <button onclick="insertEmoji('⚡')">⚡</button>
+                <button onclick="insertEmoji('☔')">☔</button>
+                <button onclick="insertEmoji('🌊')">🌊</button>
                 <button onclick="insertEmoji('🎉')">🎉</button>
-                <button onclick="insertEmoji('⚠️')">⚠️</button>
+                <button onclick="insertEmoji('🎊')">🎊</button>
+                <button onclick="insertEmoji('🎈')">🎈</button>
+                <button onclick="insertEmoji('🎁')">🎁</button>
+                <button onclick="insertEmoji('🎀')">🎀</button>
+                <button onclick="insertEmoji('🎗️')">🎗️</button>
+                <button onclick="insertEmoji('🎟️')">🎟️</button>
+                <button onclick="insertEmoji('🎫')">🎫</button>
+                <button onclick="insertEmoji('🎖️')">🎖️</button>
+                <button onclick="insertEmoji('🏆')">🏆</button>
+                <button onclick="insertEmoji('🏅')">🏅</button>
+                <button onclick="insertEmoji('🥇')">🥇</button>
+                <button onclick="insertEmoji('🥈')">🥈</button>
+                <button onclick="insertEmoji('🥉')">🥉</button>
+                <button onclick="insertEmoji('⚽')">⚽</button>
+                <button onclick="insertEmoji('⚾')">⚾</button>
+                <button onclick="insertEmoji('🥎')">🥎</button>
+                <button onclick="insertEmoji('🏀')">🏀</button>
+                <button onclick="insertEmoji('🏐')">🏐</button>
+                <button onclick="insertEmoji('🏈')">🏈</button>
+                <button onclick="insertEmoji('🏉')">🏉</button>
+                <button onclick="insertEmoji('🎾')">🎾</button>
+                <button onclick="insertEmoji('🥏')">🥏</button>
+                <button onclick="insertEmoji('🎳')">🎳</button>
+                <button onclick="insertEmoji('🏏')">🏏</button>
+                <button onclick="insertEmoji('🥍')">🥍</button>
+                <button onclick="insertEmoji('🏑')">🏑</button>
+                <button onclick="insertEmoji('🏒')">🏒</button>
+                <button onclick="insertEmoji('🥍')">🥍</button>
+                <button onclick="insertEmoji('🏓')">🏓</button>
+                <button onclick="insertEmoji('🏸')">🏸</button>
+                <button onclick="insertEmoji('🥊')">🥊</button>
+                <button onclick="insertEmoji('🥋')">🥋</button>
+                <button onclick="insertEmoji('🥅')">🥅</button>
+                <button onclick="insertEmoji('⛳')">⛳</button>
+                <button onclick="insertEmoji('⛹️')">⛹️</button>
+                <button onclick="insertEmoji('🎾')">🎾</button>
+                <button onclick="insertEmoji('🎱')">🎱</button>
+                <button onclick="insertEmoji('🎳')">🎳</button>
+                <button onclick="insertEmoji('⛳')">⛳</button>
+                <button onclick="insertEmoji('🎮')">🎮</button>
+                <button onclick="insertEmoji('🎰')">🎰</button>
+                <button onclick="insertEmoji('🧩')">🧩</button>
+                <button onclick="insertEmoji('🎯')">🎯</button>
+                <button onclick="insertEmoji('🎲')">🎲</button>
+                <button onclick="insertEmoji('🧱')">🧱</button>
+                <button onclick="insertEmoji('🧲')">🧲</button>
+                <button onclick="insertEmoji('⚗️')">⚗️</button>
+                <button onclick="insertEmoji('🔮')">🔮
             </div>
             
             <!-- Action bar -->
@@ -646,6 +935,9 @@
                 if (isMe) {
                     const meLabel = window.currentLang === 'zh' ? '我' : 'ME';
                     html += `<div class="me-badge">${meLabel}</div>`;
+                } else if (p.is_host) {
+                    const hostLabel = window.currentLang === 'zh' ? '房主' : 'HOST';
+                    html += `<div class="host-badge">${hostLabel}</div>`;
                 }
                 html += `<span class="emoji">${p.avatar}</span><span class="pname">${p.name}</span>`;
                 
