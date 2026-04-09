@@ -286,6 +286,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
             await self.handle_blank_guess(data)
         elif action == "emoji_reaction":
             await self.handle_emoji_reaction(data)
+        elif action == "ping":
+            pass # Keep-alive
 
     async def handle_join(self, data):
         room_data = ROOMS[self.room_name]
@@ -492,7 +494,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
             return
 
         word_pairs = get_word_pairs(lang)
-        chosen_pair = random.choice(word_pairs)
+        random.shuffle(word_pairs)  # Shuffle first for more randomness
+        chosen_pair = word_pairs[0]
         undercover_channel = random.choice(channel_names)
         blank_channel = (
             random.choice([ch for ch in channel_names if ch != undercover_channel])
@@ -1488,20 +1491,26 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 }
             )
 
+        payload_data = {
+            "action": "update_players",
+            "players": players_info,
+            "host": host_name,
+            "game_status": room_data["status"],
+            "ready_count": len(room_data["ready_players"]),
+            "total_count": len(room_data["players"]),
+        }
+
         await self.channel_layer.group_send(
             self.room_group_name,
             {
                 "type": "chat_message",
-                "data": {
-                    "action": "update_players",
-                    "players": players_info,
-                    "host": host_name,
-                    "game_status": room_data["status"],
-                    "ready_count": len(room_data["ready_players"]),
-                    "total_count": len(room_data["players"]),
-                },
+                "data": payload_data,
+                "json": json.dumps(payload_data),
             },
         )
 
     async def chat_message(self, event):
-        await self.send(text_data=json.dumps(event["data"]))
+        if "json" in event:
+            await self.send(text_data=event["json"])
+        else:
+            await self.send(text_data=json.dumps(event["data"]))

@@ -45,13 +45,14 @@ INSTALLED_APPS = [
 
 
 # Configure the Channel Layer. In production, we use Redis for multi-worker scaling.
-# We fallback to InMemoryChannelLayer for local development if REDIS_HOST is absent.
 if os.environ.get('REDIS_HOST'):
     CHANNEL_LAYERS = {
         "default": {
             "BACKEND": "channels_redis.core.RedisChannelLayer",
             "CONFIG": {
                 "hosts": [(os.environ.get('REDIS_HOST', 'redis'), 6379)],
+                "capacity": 1000,
+                "expiry": 60,
             },
         }
     }

@@ -539,6 +539,8 @@
         let playersData = [];
         let emojiTargetName = null;
         let emojiCooldown = {}; // Track cooldown per target
+        let heartbeatInterval = null;
+        let recordingTimer = null;
         window.currentLang = 'en';
 
         const i18n = {
@@ -1071,10 +1073,19 @@
             chatSocket.onopen = () => {
                 reconnectAttempts = 0;
                 chatSocket.send(JSON.stringify({'action': 'join', 'username': myUsername, 'lang': window.currentLang}));
+                
+                // Start heartbeat
+                if (heartbeatInterval) clearInterval(heartbeatInterval);
+                heartbeatInterval = setInterval(() => {
+                    if (chatSocket && chatSocket.readyState === WebSocket.OPEN) {
+                        chatSocket.send(JSON.stringify({'action': 'ping'}));
+                    }
+                }, 30000); // Ping every 30s
             };
 
             chatSocket.onclose = (e) => {
                 console.warn('WebSocket closed:', e.code, e.reason);
+                if (heartbeatInterval) clearInterval(heartbeatInterval);
                 // Only auto-reconnect if we were already in the chat screen
                 const chatScreen = document.getElementById('screen-chat');
                 if (myUsername && !chatScreen.classList.contains('hidden') && reconnectAttempts < MAX_RECONNECT) {
@@ -1402,10 +1413,11 @@
                             mimeType = 'audio/ogg;codecs=opus';
                         }
                     }
-                    const options = mimeType ? { mimeType } : {};
+                    const options = mimeType ? { mimeType, audioBitsPerSecond: 16000 } : {};
                     mediaRecorder = new MediaRecorder(stream, options);
                     mediaRecorder.ondataavailable = e => { if (e.data.size > 0) audioChunks.push(e.data); };
                     mediaRecorder.onstop = () => {
+                        if (recordingTimer) clearTimeout(recordingTimer);
                         const audioBlob = new Blob(audioChunks, { type: mediaRecorder.mimeType || 'audio/webm' });
                         audioChunks = [];
                         const reader = new FileReader();
@@ -1481,8 +1493,32 @@
         };
 
         const btnRecord = document.getElementById('btn-record');
-        const startRecord = (e) => { e.preventDefault(); if((isMyTurn || gameStatus === 'waiting') && mediaRecorder && mediaRecorder.state === 'inactive') { mediaRecorder.start(); btnRecord.classList.add('recording'); btnRecord.textContent = '🔴'; } };
-        const stopRecord = (e) => { e.preventDefault(); if((isMyTurn || gameStatus === 'waiting') && mediaRecorder && mediaRecorder.state === 'recording') { mediaRecorder.stop(); btnRecord.classList.remove('recording'); btnRecord.textContent = '🎤'; } };
+        const startRecord = (e) => { 
+            e.preventDefault(); 
+            if((isMyTurn || gameStatus === 'waiting') && mediaRecorder && mediaRecorder.state === 'inactive') { 
+                mediaRecorder.start(); 
+                btnRecord.classList.add('recording'); 
+                btnRecord.textContent = '🔴'; 
+                
+                // Auto-stop after 30 seconds
+                if (recordingTimer) clearTimeout(recordingTimer);
+                recordingTimer = setTimeout(() => {
+                    if (mediaRecorder.state === 'recording') {
+                        stopRecord(e);
+                        showToast(window.currentLang === 'zh' ? '已达到最大录音时间 (30s)' : 'Max recording time reached (30s)');
+                    }
+                }, 30000);
+            } 
+        };
+        const stopRecord = (e) => { 
+            e.preventDefault(); 
+            if((isMyTurn || gameStatus === 'waiting') && mediaRecorder && mediaRecorder.state === 'recording') { 
+                if (recordingTimer) clearTimeout(recordingTimer);
+                mediaRecorder.stop(); 
+                btnRecord.classList.remove('recording'); 
+                btnRecord.textContent = '🎤'; 
+            } 
+        };
         btnRecord.addEventListener('mousedown', startRecord); btnRecord.addEventListener('mouseup', stopRecord);
         btnRecord.addEventListener('touchstart', startRecord); btnRecord.addEventListener('touchend', stopRecord);
     </script>
