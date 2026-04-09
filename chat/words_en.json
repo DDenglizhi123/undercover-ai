@@ -1,502 +1,2202 @@
 [
-  { "civilian": "Pancake", "undercover": "Waffle" },
-  { "civilian": "Biscuit", "undercover": "Cookie" },
-  { "civilian": "Soup", "undercover": "Stew" },
-  { "civilian": "Pasta", "undercover": "Noodle" },
-  { "civilian": "Jam", "undercover": "Jelly" },
-  { "civilian": "Cup", "undercover": "Glass" },
-  { "civilian": "Book", "undercover": "Magazine" },
-  { "civilian": "Brush", "undercover": "Comb" },
-  { "civilian": "Soap", "undercover": "Shampoo" },
-  { "civilian": "Towel", "undercover": "Blanket" },
-  { "civilian": "Bed", "undercover": "Sofa" },
-  { "civilian": "Door", "undercover": "Window" },
-  { "civilian": "Key", "undercover": "Lock" },
-  { "civilian": "Sun", "undercover": "Moon" },
-  { "civilian": "Star", "undercover": "Planet" },
-  { "civilian": "Rain", "undercover": "Snow" },
-  { "civilian": "Wind", "undercover": "Storm" },
-  { "civilian": "Tree", "undercover": "Bush" },
-  { "civilian": "Flower", "undercover": "Grass" },
-  { "civilian": "Gold", "undercover": "Silver" },
-  { "civilian": "School", "undercover": "University" },
-  { "civilian": "Hospital", "undercover": "Clinic" },
-  { "civilian": "Shop", "undercover": "Mall" },
-  { "civilian": "Park", "undercover": "Garden" },
-  { "civilian": "Beach", "undercover": "Desert" },
-  { "civilian": "House", "undercover": "Apartment" },
-  { "civilian": "Lion", "undercover": "Tiger" },
-  { "civilian": "Eagle", "undercover": "Hawk" },
-  { "civilian": "Snake", "undercover": "Worm" },
-  { "civilian": "Shark", "undercover": "Dolphin" },
-  { "civilian": "Ant", "undercover": "Spider" },
-  { "civilian": "Monkey", "undercover": "Gorilla" },
-  { "civilian": "Day", "undercover": "Night" },
-  { "civilian": "Dream", "undercover": "Nightmare" },
-  { "civilian": "Love", "undercover": "Like" },
-  { "civilian": "Laugh", "undercover": "Smile" },
-  { "civilian": "Cry", "undercover": "Weep" },
-  { "civilian": "Walk", "undercover": "Run" },
-  { "civilian": "Jump", "undercover": "Fly" },
-  { "civilian": "Sing", "undercover": "Hum" },
-  { "civilian": "Paint", "undercover": "Draw" },
-  { "civilian": "Read", "undercover": "Write" },
-  { "civilian": "Listen", "undercover": "Hear" },
-  { "civilian": "Look", "undercover": "See" },
-  { "civilian": "Speak", "undercover": "Talk" },
-  { "civilian": "Sword", "undercover": "Knife" },
-  { "civilian": "Gun", "undercover": "Cannon" },
-  { "civilian": "Shield", "undercover": "Armor" },
-  { "civilian": "Friend", "undercover": "Colleague" },
-  { "civilian": "Mother", "undercover": "Aunt" },
-  { "civilian": "Father", "undercover": "Uncle" },
-  { "civilian": "Brother", "undercover": "Cousin" },
-  { "civilian": "Husband", "undercover": "Boyfriend" },
-  { "civilian": "Wife", "undercover": "Girlfriend" },
-  { "civilian": "Boss", "undercover": "Manager" },
-  { "civilian": "Rival", "undercover": "Enemy" },
-  { "civilian": "Guest", "undercover": "Host" },
-  { "civilian": "Partner", "undercover": "Ally" },
-  { "civilian": "Pyramid", "undercover": "Sphinx" },
-  { "civilian": "Tower", "undercover": "Skyscraper" },
-  { "civilian": "Bridge", "undercover": "Tunnel" },
-  { "civilian": "Museum", "undercover": "Gallery" },
-  { "civilian": "Theater", "undercover": "Cinema" },
-  { "civilian": "Stadium", "undercover": "Arena" },
-  { "civilian": "Airport", "undercover": "Station" },
-  { "civilian": "Library", "undercover": "Bookstore" },
-  { "civilian": "Temple", "undercover": "Shrine" },
-  { "civilian": "Church", "undercover": "Cathedral" },
-  { "civilian": "Football", "undercover": "Rugby" },
-  { "civilian": "Basketball", "undercover": "Volleyball" },
-  { "civilian": "Tennis", "undercover": "Badminton" },
-  { "civilian": "Baseball", "undercover": "Softball" },
-  { "civilian": "Swimming", "undercover": "Diving" },
-  { "civilian": "Skiing", "undercover": "Skating" },
-  { "civilian": "Boxing", "undercover": "Wrestling" },
-  { "civilian": "Yoga", "undercover": "Pilates" },
-  { "civilian": "Chess", "undercover": "Checkers" },
-  { "civilian": "Poker", "undercover": "Blackjack" },
-  { "civilian": "Website", "undercover": "App" },
-  { "civilian": "Email", "undercover": "Message" },
-  { "civilian": "Password", "undercover": "Pin" },
-  { "civilian": "Hacker", "undercover": "Cracker" },
-  { "civilian": "Virus", "undercover": "Malware" },
-  { "civilian": "Server", "undercover": "Cloud" },
-  { "civilian": "Keyboard", "undercover": "Mouse" },
-  { "civilian": "Screen", "undercover": "Monitor" },
-  { "civilian": "Python", "undercover": "Java" },
-  { "civilian": "Linux", "undercover": "Windows" },
-  { "civilian": "Luck", "undercover": "Destiny" },
-  { "civilian": "Truth", "undercover": "Fact" },
-  { "civilian": "Lie", "undercover": "Rumor" },
-  { "civilian": "Dream", "undercover": "Goal" },
-  { "civilian": "Hope", "undercover": "Wish" },
-  { "civilian": "Memory", "undercover": "History" },
-  { "civilian": "Idea", "undercover": "Thought" },
-  { "civilian": "Rule", "undercover": "Law" },
-  { "civilian": "Crime", "undercover": "Sin" },
-  { "civilian": "Reward", "undercover": "Prize" },
-  { "civilian": "Bacon", "undercover": "Ham" },
-  { "civilian": "Steak", "undercover": "Ribs" },
-  { "civilian": "Salad", "undercover": "Soup" },
-  { "civilian": "Sushi", "undercover": "Sashimi" },
-  { "civilian": "Vodka", "undercover": "Gin" },
-  { "civilian": "Wine", "undercover": "Beer" },
-  { "civilian": "Juice", "undercover": "Soda" },
-  { "civilian": "Cake", "undercover": "Pie" },
-  { "civilian": "Chocolate", "undercover": "Candy" },
-  { "civilian": "Sugar", "undercover": "Honey" },
-  { "civilian": "Hammer", "undercover": "Mallet" },
-  { "civilian": "Wrench", "undercover": "Pliers" },
-  { "civilian": "Scissors", "undercover": "Knife" },
-  { "civilian": "Glue", "undercover": "Tape" },
-  { "civilian": "Nail", "undercover": "Screw" },
-  { "civilian": "Bucket", "undercover": "Bowl" },
-  { "civilian": "Basket", "undercover": "Box" },
-  { "civilian": "Bag", "undercover": "Purse" },
-  { "civilian": "Wallet", "undercover": "Pocket" },
-  { "civilian": "Umbrella", "undercover": "Raincoat" },
-  { "civilian": "Scooter", "undercover": "Skateboard" },
-  { "civilian": "Tractor", "undercover": "Bulldozer" },
-  { "civilian": "Submarine", "undercover": "Ship" },
-  { "civilian": "Ferry", "undercover": "Yacht" },
-  { "civilian": "Rocket", "undercover": "Missile" },
-  { "civilian": "Comet", "undercover": "Meteor" },
-  { "civilian": "Galaxy", "undercover": "Universe" },
-  { "civilian": "Cave", "undercover": "Mine" },
-  { "civilian": "Cliff", "undercover": "Peak" },
-  { "civilian": "Island", "undercover": "Peninsula" },
-  { "civilian": "Volcano", "undercover": "Mountain" },
-  { "civilian": "Swamp", "undercover": "Marsh" },
-  { "civilian": "Sand", "undercover": "Dust" },
-  { "civilian": "Clay", "undercover": "Mud" },
-  { "civilian": "Rock", "undercover": "Stone" },
-  { "civilian": "Gold", "undercover": "Platinum" },
-  { "civilian": "Diamond", "undercover": "Ruby" },
-  { "civilian": "Cotton", "undercover": "Silk" },
-  { "civilian": "Leather", "undercover": "Suede" },
-  { "civilian": "Plastic", "undercover": "Rubber" },
-  { "civilian": "Glass", "undercover": "Crystal" },
-  { "civilian": "Wood", "undercover": "Bamboo" },
-  { "civilian": "Paper", "undercover": "Cardboard" },
-  { "civilian": "String", "undercover": "Rope" },
-  { "civilian": "Wire", "undercover": "Cable" },
-  { "civilian": "Helmet", "undercover": "Hat" },
-  { "civilian": "Castle", "undercover": "Palace" },
-  { "civilian": "King", "undercover": "Emperor" },
-  { "civilian": "Queen", "undercover": "Princess" },
-  { "civilian": "Knight", "undercover": "Soldier" },
-  { "civilian": "Wizard", "undercover": "Witch" },
-  { "civilian": "Ghost", "undercover": "Zombie" },
-  { "civilian": "Vampire", "undercover": "Werewolf" },
-  { "civilian": "Angel", "undercover": "Demon" },
-  { "civilian": "Heaven", "undercover": "Hell" },
-  { "civilian": "Fire", "undercover": "Ice" },
-  { "civilian": "Earth", "undercover": "Mars" },
-  { "civilian": "Spring", "undercover": "Autumn" },
-  { "civilian": "Summer", "undercover": "Winter" },
-  { "civilian": "Morning", "undercover": "Evening" },
-  { "civilian": "Monday", "undercover": "Friday" },
-  { "civilian": "January", "undercover": "December" },
-  { "civilian": "Math", "undercover": "Science" },
-  { "civilian": "History", "undercover": "Geography" },
-  { "civilian": "Art", "undercover": "Music" },
-  { "civilian": "Teacher", "undercover": "Professor" },
-  { "civilian": "Student", "undercover": "Pupil" },
-  { "civilian": "Doctor", "undercover": "Nurse" },
-  { "civilian": "Police", "undercover": "Detective" },
-  { "civilian": "Chef", "undercover": "Baker" },
-  { "civilian": "Actor", "undercover": "Singer" },
-  { "civilian": "Writer", "undercover": "Poet" },
-  { "civilian": "Painter", "undercover": "Sculptor" },
-  { "civilian": "Farmer", "undercover": "Gardener" },
-  { "civilian": "Driver", "undercover": "Pilot" },
-  { "civilian": "Sailor", "undercover": "Captain" },
-  { "civilian": "Train", "undercover": "Tram" },
-  { "civilian": "Bus", "undercover": "Coach" },
-  { "civilian": "Taxi", "undercover": "Uber" },
-  { "civilian": "Ticket", "undercover": "Pass" },
-  { "civilian": "Map", "undercover": "Compass" },
-  { "civilian": "Luggage", "undercover": "Backpack" },
-  { "civilian": "Hotel", "undercover": "Motel" },
-  { "civilian": "Restaurant", "undercover": "Cafe" },
-  { "civilian": "Menu", "undercover": "Recipe" },
-  { "civilian": "Fork", "undercover": "Spoon" },
-  { "civilian": "Plate", "undercover": "Bowl" },
-  { "civilian": "Pot", "undercover": "Pan" },
-  { "civilian": "Oven", "undercover": "Microwave" },
-  { "civilian": "Fridge", "undercover": "Freezer" },
-  { "civilian": "Broom", "undercover": "Mop" },
-  { "civilian": "Trash", "undercover": "Garbage" },
-  { "civilian": "Dust", "undercover": "Dirt" },
-  { "civilian": "Soap", "undercover": "Detergent" },
-  { "civilian": "Washing", "undercover": "Cleaning" },
-  { "civilian": "Iron", "undercover": "Steamer" },
-  { "civilian": "Needle", "undercover": "Thread" },
-  { "civilian": "Dog", "undercover": "Wolf" },
-  { "civilian": "Cat", "undercover": "Tiger" },
-  { "civilian": "Dolphin", "undercover": "Whale" },
-  { "civilian": "Crocodile", "undercover": "Alligator" },
-  { "civilian": "Frog", "undercover": "Toad" },
-  { "civilian": "Bee", "undercover": "Wasp" },
-  { "civilian": "Butterfly", "undercover": "Moth" },
-  { "civilian": "Rabbit", "undercover": "Hare" },
-  { "civilian": "Rat", "undercover": "Mouse" },
-  { "civilian": "Penguin", "undercover": "Ostrich" },
-  { "civilian": "Apple", "undercover": "Pear" },
-  { "civilian": "Peach", "undercover": "Plum" },
-  { "civilian": "Coffee", "undercover": "Tea" },
-  { "civilian": "Coke", "undercover": "Pepsi" },
-  { "civilian": "Burger", "undercover": "Sandwich" },
-  { "civilian": "Pizza", "undercover": "Pie" },
-  { "civilian": "Butter", "undercover": "Cheese" },
-  { "civilian": "Milk", "undercover": "Yogurt" },
-  { "civilian": "Onion", "undercover": "Garlic" },
-  { "civilian": "Tomato", "undercover": "Potato" },
-  { "civilian": "Smartphone", "undercover": "Tablet" },
-  { "civilian": "Laptop", "undercover": "Desktop" },
-  { "civilian": "Pen", "undercover": "Pencil" },
-  { "civilian": "Notebook", "undercover": "Diary" },
-  { "civilian": "Clock", "undercover": "Watch" },
-  { "civilian": "Glasses", "undercover": "Contacts" },
-  { "civilian": "Guitar", "undercover": "Violin" },
-  { "civilian": "Piano", "undercover": "Keyboard" },
-  { "civilian": "Sofa", "undercover": "Chair" },
-  { "civilian": "Carpet", "undercover": "Rug" },
-  { "civilian": "Car", "undercover": "Truck" },
-  { "civilian": "Motorcycle", "undercover": "Bicycle" },
-  { "civilian": "Airplane", "undercover": "Helicopter" },
-  { "civilian": "Boat", "undercover": "Ship" },
-  { "civilian": "Train", "undercover": "Subway" },
-  { "civilian": "River", "undercover": "Lake" },
-  { "civilian": "Ocean", "undercover": "Sea" },
-  { "civilian": "Mountain", "undercover": "Hill" },
-  { "civilian": "Forest", "undercover": "Jungle" },
-  { "civilian": "Village", "undercover": "City" },
-  { "civilian": "Eye", "undercover": "Ear" },
-  { "civilian": "Hand", "undercover": "Foot" },
-  { "civilian": "Shirt", "undercover": "Sweater" },
-  { "civilian": "Jacket", "undercover": "Coat" },
-  { "civilian": "Shoes", "undercover": "Boots" },
-  { "civilian": "Hat", "undercover": "Cap" },
-  { "civilian": "Socks", "undercover": "Gloves" },
-  { "civilian": "Scarf", "undercover": "Tie" },
-  { "civilian": "Necklace", "undercover": "Bracelet" },
-  { "civilian": "Ring", "undercover": "Earring" },
-  { "civilian": "Camera", "undercover": "Webcam" },
-  { "civilian": "Speaker", "undercover": "Microphone" },
-  { "civilian": "Wallet", "undercover": "Purse" },
-  { "civilian": "Mirror", "undercover": "Window" },
-  { "civilian": "Toothbrush", "undercover": "Toothpaste" },
-  { "civilian": "Shower", "undercover": "Bath" },
-  { "civilian": "Toilet", "undercover": "Sink" },
-  { "civilian": "Lamp", "undercover": "Flashlight" },
-  { "civilian": "Battery", "undercover": "Charger" },
-  { "civilian": "Fan", "undercover": "Heater" },
-  { "civilian": "Pillow", "undercover": "Cushion" },
-  { "civilian": "Table", "undercover": "Desk" },
-  { "civilian": "Ladder", "undercover": "Stairs" },
-  { "civilian": "Fence", "undercover": "Wall" },
-  { "civilian": "Pool", "undercover": "Pond" },
-  { "civilian": "Gym", "undercover": "Spa" },
-  { "civilian": "Zoo", "undercover": "Aquarium" },
-  { "civilian": "Farm", "undercover": "Ranch" },
-  { "civilian": "Market", "undercover": "Supermarket" },
-  { "civilian": "Bank", "undercover": "ATM" },
-  { "civilian": "Post office", "undercover": "Mailbox" },
-  { "civilian": "Gym", "undercover": "Stadium" },
-  { "civilian": "Casino", "undercover": "Lottery" },
-  { "civilian": "Radio", "undercover": "Podcast" },
-  { "civilian": "Newspaper", "undercover": "Magazine" },
-  { "civilian": "Painting", "undercover": "Photo" },
-  { "civilian": "Statue", "undercover": "Mural" },
-  { "civilian": "Skateboard", "undercover": "Surfboard" },
-  { "civilian": "Bowling", "undercover": "Billiards" },
-  { "civilian": "Fishing", "undercover": "Hunting" },
-  { "civilian": "Camping", "undercover": "Hiking" },
-  { "civilian": "Travel", "undercover": "Vacation" },
-  { "civilian": "Train", "undercover": "Bus" },
-  { "civilian": "Ship", "undercover": "Cruise" },
-  { "civilian": "Hotel", "undercover": "Resort" },
-  { "civilian": "Mountain", "undercover": "Valley" },
-  { "civilian": "Beach", "undercover": "Island" },
-  { "civilian": "Winter", "undercover": "Autumn" },
-  { "civilian": "Spring", "undercover": "Summer" },
-  { "civilian": "Rainy", "undercover": "Cloudy" },
-  { "civilian": "Hot", "undercover": "Warm" },
-  { "civilian": "Cold", "undercover": "Cool" },
-  { "civilian": "Big", "undercover": "Huge" },
-  { "civilian": "Small", "undercover": "Tiny" },
-  { "civilian": "Fast", "undercover": "Quick" },
-  { "civilian": "Slow", "undercover": "Lazy" },
-  { "civilian": "Strong", "undercover": "Tough" },
-  { "civilian": "Weak", "undercover": "Delicate" },
-  { "civilian": "Rich", "undercover": "Wealthy" },
-  { "civilian": "Poor", "undercover": "Broke" },
-  { "civilian": "Happy", "undercover": "Joyful" },
-  { "civilian": "Sad", "undercover": "Depressed" },
-  { "civilian": "Angry", "undercover": "Furious" },
-  { "civilian": "Calm", "undercover": "Peaceful" },
-  { "civilian": "Smart", "undercover": "Clever" },
-  { "civilian": "Dumb", "undercover": "Stupid" },
-  { "civilian": "Funny", "undercover": "Hilarious" },
-  { "civilian": "Boring", "undercover": "Dull" },
-  { "civilian": "Exciting", "undercover": "Thrilling" },
-  { "civilian": "Easy", "undercover": "Simple" },
-  { "civilian": "Hard", "undercover": "Difficult" },
-  { "civilian": "Young", "undercover": "Teen" },
-  { "civilian": "Old", "undercover": "Elder" },
-  { "civilian": "Baby", "undercover": "Infant" },
-  { "civilian": "Adult", "undercover": "Grownup" },
-  { "civilian": "Man", "undercover": "Guy" },
-  { "civilian": "Woman", "undercover": "Lady" },
-  { "civilian": "Boy", "undercover": "Kid" },
-  { "civilian": "Girl", "undercover": "Maid" },
-  { "civilian": "Rich", "undercover": "Famous" },
-  { "civilian": "Popular", "undercover": "Trendy" },
-  { "civilian": "Quiet", "undercover": "Silent" },
-  { "civilian": "Loud", "undercover": "Noisy" },
-  { "civilian": "Clean", "undercover": "Neat" },
-  { "civilian": "Dirty", "undercover": "Messy" },
-  { "civilian": "New", "undercover": "Fresh" },
-  { "civilian": "Old", "undercover": "Ancient" },
-  { "civilian": "Dark", "undercover": "Black" },
-  { "civilian": "Bright", "undercover": "Shiny" },
-  { "civilian": "Light", "undercover": "Pale" },
-  { "civilian": "Heavy", "undercover": "Weighty" },
-  { "civilian": "Soft", "undercover": "Gentle" },
-  { "civilian": "Hard", "undercover": "Rough" },
-  { "civilian": "Wet", "undercover": "Damp" },
-  { "civilian": "Dry", "undercover": "Arid" },
-  { "civilian": "Full", "undercover": "Satisfied" },
-  { "civilian": "Empty", "undercover": "Blank" },
-  { "civilian": "Open", "undercover": "Unlock" },
-  { "civilian": "Close", "undercover": "Shut" },
-  { "civilian": "Start", "undercover": "Begin" },
-  { "civilian": "End", "undercover": "Finish" },
-  { "civilian": "Win", "undercover": "Victory" },
-  { "civilian": "Lose", "undercover": "Defeat" },
-  { "civilian": "Give", "undercover": "Take" },
-  { "civilian": "Buy", "undercover": "Sell" },
-  { "civilian": "Ask", "undercover": "Answer" },
-  { "civilian": "Come", "undercover": "Go" },
-  { "civilian": "Stay", "undercover": "Leave" },
-  { "civilian": "Work", "undercover": "Job" },
-  { "civilian": "Rest", "undercover": "Relax" },
-  { "civilian": "Play", "undercover": "Fun" },
-  { "civilian": "Study", "undercover": "Learn" },
-  { "civilian": "Teach", "undercover": "Train" },
-  { "civilian": "Cook", "undercover": "Bake" },
-  { "civilian": "Build", "undercover": "Make" },
-  { "civilian": "Fix", "undercover": "Repair" },
-  { "civilian": "Break", "undercover": "Smash" },
-  { "civilian": "Save", "undercover": "Rescue" },
-  { "civilian": "Help", "undercover": "Assist" },
-  { "civilian": "Stop", "undercover": "Halt" },
-  { "civilian": "Start", "undercover": "Launch" },
-  { "civilian": "Hide", "undercover": "Cover" },
-  { "civilian": "Find", "undercover": "Discover" },
-  { "civilian": "Lose", "undercover": "Miss" },
-  { "civilian": "Remember", "undercover": "Recall" },
-  { "civilian": "Forget", "undercover": "Ignore" },
-  { "civilian": "Love", "undercover": "Adore" },
-  { "civilian": "Hate", "undercover": "Despise" },
-  { "civilian": "Trust", "undercover": "Believe" },
-  { "civilian": "Doubt", "undercover": "Suspect" },
-  { "civilian": "Safe", "undercover": "Secure" },
-  { "civilian": "Danger", "undercover": "Risk" },
-  { "civilian": "Free", "undercover": "Open" },
-  { "civilian": "Busy", "undercover": "Occupied" },
-  { "civilian": "Careful", "undercover": "Cautious" },
-  { "civilian": "Careless", "undercover": "Reckless" },
-  { "civilian": "Kind", "undercover": "Nice" },
-  { "civilian": "Cruel", "undercover": "Mean" },
-  { "civilian": "Brave", "undercover": "Courageous" },
-  { "civilian": "Scared", "undercover": "Afraid" },
-  { "civilian": "Honest", "undercover": "Sincere" },
-  { "civilian": "Fake", "undercover": "Counterfeit" },
-  { "civilian": "Real", "undercover": "Authentic" },
-  { "civilian": "Perfect", "undercover": "Flawless" },
-  { "civilian": "Imperfect", "undercover": "Flawed" },
-  { "civilian": "Success", "undercover": "Achievement" },
-  { "civilian": "Failure", "undercover": "Mistake" },
-  { "civilian": "Profit", "undercover": "Gain" },
-  { "civilian": "Loss", "undercover": "Debt" },
-  { "civilian": "Speed", "undercover": "Velocity" },
-  { "civilian": "Distance", "undercover": "Range" },
-  { "civilian": "Height", "undercover": "Altitude" },
-  { "civilian": "Depth", "undercover": "Abyss" },
-  { "civilian": "Weight", "undercover": "Mass" },
-  { "civilian": "Volume", "undercover": "Capacity" },
-  { "civilian": "Temperature", "undercover": "Heat" },
-  { "civilian": "Pressure", "undercover": "Stress" },
-  { "civilian": "Sound", "undercover": "Noise" },
-  { "civilian": "Light", "undercover": "Beam" },
-  { "civilian": "Shadow", "undercover": "Darkness" },
-  { "civilian": "Color", "undercover": "Hue" },
-  { "civilian": "Shape", "undercover": "Form" },
-  { "civilian": "Size", "undercover": "Scale" },
-  { "civilian": "Style", "undercover": "Fashion" },
-  { "civilian": "Taste", "undercover": "Flavor" },
-  { "civilian": "Smell", "undercover": "Odor" },
-  { "civilian": "Texture", "undercover": "Surface" },
-  { "civilian": "Quality", "undercover": "Grade" },
-  { "civilian": "Price", "undercover": "Cost" },
-  { "civilian": "Value", "undercover": "Worth" },
-  { "civilian": "Offer", "undercover": "Deal" },
-  { "civilian": "Order", "undercover": "Command" },
-  { "civilian": "Request", "undercover": "Demand" },
-  { "civilian": "Promise", "undercover": "Oath" },
-  { "civilian": "Secret", "undercover": "Mystery" },
-  { "civilian": "Truth", "undercover": "Reality" },
-  { "civilian": "Story", "undercover": "Tale" },
-  { "civilian": "Joke", "undercover": "Prank" },
-  { "civilian": "Game", "undercover": "Match" },
-  { "civilian": "Toy", "undercover": "Gift" },
-  { "civilian": "Tool", "undercover": "Device" },
-  { "civilian": "Machine", "undercover": "Engine" },
-  { "civilian": "Robot", "undercover": "Drone" },
-  { "civilian": "AI", "undercover": "Bot" },
-  { "civilian": "Code", "undercover": "Script" },
-  { "civilian": "Data", "undercover": "Info" },
-  { "civilian": "File", "undercover": "Folder" },
-  { "civilian": "Link", "undercover": "URL" },
-  { "civilian": "Post", "undercover": "Article" },
-  { "civilian": "Chat", "undercover": "Message" },
-  { "civilian": "Call", "undercover": "Ring" },
-  { "civilian": "Video", "undercover": "Movie" },
-  { "civilian": "Photo", "undercover": "Image" },
-  { "civilian": "Music", "undercover": "Song" },
-  { "civilian": "Dance", "undercover": "Move" },
-  { "civilian": "Art", "undercover": "Design" },
-  { "civilian": "Write", "undercover": "Type" },
-  { "civilian": "Draw", "undercover": "Sketch" },
-  { "civilian": "Paint", "undercover": "Color" },
-  { "civilian": "Cook", "undercover": "Grill" },
-  { "civilian": "Plant", "undercover": "Grow" },
-  { "civilian": "Clean", "undercover": "Wash" },
-  { "civilian": "Fix", "undercover": "Mend" },
-  { "civilian": "Build", "undercover": "Construct" },
-  { "civilian": "Break", "undercover": "Crack" },
-  { "civilian": "Throw", "undercover": "Toss" },
-  { "civilian": "Catch", "undercover": "Grab" },
-  { "civilian": "Hold", "undercover": "Grip" },
-  { "civilian": "Drop", "undercover": "Fall" },
-  { "civilian": "Rise", "undercover": "Climb" },
-  { "civilian": "Sit", "undercover": "Rest" },
-  { "civilian": "Stand", "undercover": "Rise" },
-  { "civilian": "Lie", "undercover": "Lay" },
-  { "civilian": "Wake", "undercover": "Rise" },
-  { "civilian": "Sleep", "undercover": "Rest" },
-  { "civilian": "Dream", "undercover": "Imagine" },
-  { "civilian": "Think", "undercover": "Ponder" },
-  { "civilian": "Know", "undercover": "Understand" },
-  { "civilian": "Guess", "undercover": "Assume" },
-  { "civilian": "Learn", "undercover": "Study" },
-  { "civilian": "Teach", "undercover": "Educate" },
-  { "civilian": "Lead", "undercover": "Guide" },
-  { "civilian": "Follow", "undercover": "Obey" },
-  { "civilian": "Win", "undercover": "Triumph" },
-  { "civilian": "Lose", "undercover": "Surrender" },
-  { "civilian": "Fight", "undercover": "Battle" },
-  { "civilian": "Peace", "undercover": "Treaty" },
-  { "civilian": "War", "undercover": "Conflict" },
-  { "civilian": "Army", "undercover": "Troops" },
-  { "civilian": "Navy", "undercover": "Marines" },
-  { "civilian": "Police", "undercover": "Trooper" },
-  { "civilian": "Judge", "undercover": "Jury" },
-  { "civilian": "Lawyer", "undercover": "Attorney" },
-  { "civilian": "King", "undercover": "Ruler" },
-  { "civilian": "God", "undercover": "Deity" },
-  { "civilian": "Angel", "undercover": "Spirit" },
-  { "civilian": "Devil", "undercover": "Evil" },
-  { "civilian": "Hero", "undercover": "Champion" },
-  { "civilian": "Villain", "undercover": "Criminal" },
-  { "civilian": "Star", "undercover": "Celebrity" },
-  { "civilian": "Fan", "undercover": "Follower" },
-  { "civilian": "Expert", "undercover": "Master" },
-  { "civilian": "Beginner", "undercover": "Novice" },
-  { "civilian": "Pro", "undercover": "Elite" },
-  { "civilian": "Amateur", "undercover": "Hobbyist" },
-  { "civilian": "Leader", "undercover": "Chief" },
-  { "civilian": "Follower", "undercover": "Fan" },
-  { "civilian": "Teacher", "undercover": "Tutor" },
-  { "civilian": "Student", "undercover": "Learner" },
-  { "civilian": "Doctor", "undercover": "Surgeon" },
-  { "civilian": "Nurse", "undercover": "Assistant" },
-  { "civilian": "Teacher", "undercover": "Instructor" },
-  { "civilian": "Student", "undercover": "Graduate" },
-  { "civilian": "Parent", "undercover": "Guardian" },
-  { "civilian": "Child", "undercover": "Kid" },
-  { "civilian": "Friend", "undercover": "Buddy" },
-  { "civilian": "Enemy", "undercover": "Rival" },
-  { "civilian": "Boss", "undercover": "Leader" },
-  { "civilian": "Worker", "undercover": "Employee" },
-  { "civilian": "Owner", "undercover": "Boss" },
-  { "civilian": "Customer", "undercover": "Client" },
-  { "civilian": "Seller", "undercover": "Vendor" },
-  { "civilian": "Buyer", "undercover": "Shopper" },
-  { "civilian": "Guest", "undercover": "Visitor" },
-  { "civilian": "Host", "undercover": "Owner" }
+  {
+    "civilian": "Pancake",
+    "undercover": "Waffle"
+  },
+  {
+    "civilian": "Biscuit",
+    "undercover": "Cookie"
+  },
+  {
+    "civilian": "Soup",
+    "undercover": "Stew"
+  },
+  {
+    "civilian": "Pasta",
+    "undercover": "Noodle"
+  },
+  {
+    "civilian": "Jam",
+    "undercover": "Jelly"
+  },
+  {
+    "civilian": "Cup",
+    "undercover": "Glass"
+  },
+  {
+    "civilian": "Book",
+    "undercover": "Magazine"
+  },
+  {
+    "civilian": "Brush",
+    "undercover": "Comb"
+  },
+  {
+    "civilian": "Soap",
+    "undercover": "Shampoo"
+  },
+  {
+    "civilian": "Towel",
+    "undercover": "Blanket"
+  },
+  {
+    "civilian": "Bed",
+    "undercover": "Sofa"
+  },
+  {
+    "civilian": "Door",
+    "undercover": "Window"
+  },
+  {
+    "civilian": "Key",
+    "undercover": "Lock"
+  },
+  {
+    "civilian": "Sun",
+    "undercover": "Moon"
+  },
+  {
+    "civilian": "Star",
+    "undercover": "Planet"
+  },
+  {
+    "civilian": "Rain",
+    "undercover": "Snow"
+  },
+  {
+    "civilian": "Wind",
+    "undercover": "Storm"
+  },
+  {
+    "civilian": "Tree",
+    "undercover": "Bush"
+  },
+  {
+    "civilian": "Flower",
+    "undercover": "Grass"
+  },
+  {
+    "civilian": "Gold",
+    "undercover": "Silver"
+  },
+  {
+    "civilian": "School",
+    "undercover": "University"
+  },
+  {
+    "civilian": "Hospital",
+    "undercover": "Clinic"
+  },
+  {
+    "civilian": "Shop",
+    "undercover": "Mall"
+  },
+  {
+    "civilian": "Park",
+    "undercover": "Garden"
+  },
+  {
+    "civilian": "Beach",
+    "undercover": "Desert"
+  },
+  {
+    "civilian": "House",
+    "undercover": "Apartment"
+  },
+  {
+    "civilian": "Lion",
+    "undercover": "Tiger"
+  },
+  {
+    "civilian": "Eagle",
+    "undercover": "Hawk"
+  },
+  {
+    "civilian": "Snake",
+    "undercover": "Worm"
+  },
+  {
+    "civilian": "Shark",
+    "undercover": "Dolphin"
+  },
+  {
+    "civilian": "Ant",
+    "undercover": "Spider"
+  },
+  {
+    "civilian": "Monkey",
+    "undercover": "Gorilla"
+  },
+  {
+    "civilian": "Day",
+    "undercover": "Night"
+  },
+  {
+    "civilian": "Dream",
+    "undercover": "Nightmare"
+  },
+  {
+    "civilian": "Love",
+    "undercover": "Like"
+  },
+  {
+    "civilian": "Laugh",
+    "undercover": "Smile"
+  },
+  {
+    "civilian": "Cry",
+    "undercover": "Weep"
+  },
+  {
+    "civilian": "Walk",
+    "undercover": "Run"
+  },
+  {
+    "civilian": "Jump",
+    "undercover": "Fly"
+  },
+  {
+    "civilian": "Sing",
+    "undercover": "Hum"
+  },
+  {
+    "civilian": "Paint",
+    "undercover": "Draw"
+  },
+  {
+    "civilian": "Read",
+    "undercover": "Write"
+  },
+  {
+    "civilian": "Listen",
+    "undercover": "Hear"
+  },
+  {
+    "civilian": "Look",
+    "undercover": "See"
+  },
+  {
+    "civilian": "Speak",
+    "undercover": "Talk"
+  },
+  {
+    "civilian": "Sword",
+    "undercover": "Knife"
+  },
+  {
+    "civilian": "Gun",
+    "undercover": "Cannon"
+  },
+  {
+    "civilian": "Shield",
+    "undercover": "Armor"
+  },
+  {
+    "civilian": "Friend",
+    "undercover": "Colleague"
+  },
+  {
+    "civilian": "Mother",
+    "undercover": "Aunt"
+  },
+  {
+    "civilian": "Father",
+    "undercover": "Uncle"
+  },
+  {
+    "civilian": "Brother",
+    "undercover": "Cousin"
+  },
+  {
+    "civilian": "Husband",
+    "undercover": "Boyfriend"
+  },
+  {
+    "civilian": "Wife",
+    "undercover": "Girlfriend"
+  },
+  {
+    "civilian": "Boss",
+    "undercover": "Manager"
+  },
+  {
+    "civilian": "Rival",
+    "undercover": "Enemy"
+  },
+  {
+    "civilian": "Guest",
+    "undercover": "Host"
+  },
+  {
+    "civilian": "Partner",
+    "undercover": "Ally"
+  },
+  {
+    "civilian": "Pyramid",
+    "undercover": "Sphinx"
+  },
+  {
+    "civilian": "Tower",
+    "undercover": "Skyscraper"
+  },
+  {
+    "civilian": "Bridge",
+    "undercover": "Tunnel"
+  },
+  {
+    "civilian": "Museum",
+    "undercover": "Gallery"
+  },
+  {
+    "civilian": "Theater",
+    "undercover": "Cinema"
+  },
+  {
+    "civilian": "Stadium",
+    "undercover": "Arena"
+  },
+  {
+    "civilian": "Airport",
+    "undercover": "Station"
+  },
+  {
+    "civilian": "Library",
+    "undercover": "Bookstore"
+  },
+  {
+    "civilian": "Temple",
+    "undercover": "Shrine"
+  },
+  {
+    "civilian": "Church",
+    "undercover": "Cathedral"
+  },
+  {
+    "civilian": "Football",
+    "undercover": "Rugby"
+  },
+  {
+    "civilian": "Basketball",
+    "undercover": "Volleyball"
+  },
+  {
+    "civilian": "Tennis",
+    "undercover": "Badminton"
+  },
+  {
+    "civilian": "Baseball",
+    "undercover": "Softball"
+  },
+  {
+    "civilian": "Swimming",
+    "undercover": "Diving"
+  },
+  {
+    "civilian": "Skiing",
+    "undercover": "Skating"
+  },
+  {
+    "civilian": "Boxing",
+    "undercover": "Wrestling"
+  },
+  {
+    "civilian": "Yoga",
+    "undercover": "Pilates"
+  },
+  {
+    "civilian": "Chess",
+    "undercover": "Checkers"
+  },
+  {
+    "civilian": "Poker",
+    "undercover": "Blackjack"
+  },
+  {
+    "civilian": "Website",
+    "undercover": "App"
+  },
+  {
+    "civilian": "Email",
+    "undercover": "Message"
+  },
+  {
+    "civilian": "Password",
+    "undercover": "Pin"
+  },
+  {
+    "civilian": "Hacker",
+    "undercover": "Cracker"
+  },
+  {
+    "civilian": "Virus",
+    "undercover": "Malware"
+  },
+  {
+    "civilian": "Server",
+    "undercover": "Cloud"
+  },
+  {
+    "civilian": "Keyboard",
+    "undercover": "Mouse"
+  },
+  {
+    "civilian": "Screen",
+    "undercover": "Monitor"
+  },
+  {
+    "civilian": "Python",
+    "undercover": "Java"
+  },
+  {
+    "civilian": "Linux",
+    "undercover": "Windows"
+  },
+  {
+    "civilian": "Luck",
+    "undercover": "Destiny"
+  },
+  {
+    "civilian": "Truth",
+    "undercover": "Fact"
+  },
+  {
+    "civilian": "Lie",
+    "undercover": "Rumor"
+  },
+  {
+    "civilian": "Dream",
+    "undercover": "Goal"
+  },
+  {
+    "civilian": "Hope",
+    "undercover": "Wish"
+  },
+  {
+    "civilian": "Memory",
+    "undercover": "History"
+  },
+  {
+    "civilian": "Idea",
+    "undercover": "Thought"
+  },
+  {
+    "civilian": "Rule",
+    "undercover": "Law"
+  },
+  {
+    "civilian": "Crime",
+    "undercover": "Sin"
+  },
+  {
+    "civilian": "Reward",
+    "undercover": "Prize"
+  },
+  {
+    "civilian": "Bacon",
+    "undercover": "Ham"
+  },
+  {
+    "civilian": "Steak",
+    "undercover": "Ribs"
+  },
+  {
+    "civilian": "Salad",
+    "undercover": "Soup"
+  },
+  {
+    "civilian": "Sushi",
+    "undercover": "Sashimi"
+  },
+  {
+    "civilian": "Vodka",
+    "undercover": "Gin"
+  },
+  {
+    "civilian": "Wine",
+    "undercover": "Beer"
+  },
+  {
+    "civilian": "Juice",
+    "undercover": "Soda"
+  },
+  {
+    "civilian": "Cake",
+    "undercover": "Pie"
+  },
+  {
+    "civilian": "Chocolate",
+    "undercover": "Candy"
+  },
+  {
+    "civilian": "Sugar",
+    "undercover": "Honey"
+  },
+  {
+    "civilian": "Hammer",
+    "undercover": "Mallet"
+  },
+  {
+    "civilian": "Wrench",
+    "undercover": "Pliers"
+  },
+  {
+    "civilian": "Scissors",
+    "undercover": "Knife"
+  },
+  {
+    "civilian": "Glue",
+    "undercover": "Tape"
+  },
+  {
+    "civilian": "Nail",
+    "undercover": "Screw"
+  },
+  {
+    "civilian": "Bucket",
+    "undercover": "Bowl"
+  },
+  {
+    "civilian": "Basket",
+    "undercover": "Box"
+  },
+  {
+    "civilian": "Bag",
+    "undercover": "Purse"
+  },
+  {
+    "civilian": "Wallet",
+    "undercover": "Pocket"
+  },
+  {
+    "civilian": "Umbrella",
+    "undercover": "Raincoat"
+  },
+  {
+    "civilian": "Scooter",
+    "undercover": "Skateboard"
+  },
+  {
+    "civilian": "Tractor",
+    "undercover": "Bulldozer"
+  },
+  {
+    "civilian": "Submarine",
+    "undercover": "Ship"
+  },
+  {
+    "civilian": "Ferry",
+    "undercover": "Yacht"
+  },
+  {
+    "civilian": "Rocket",
+    "undercover": "Missile"
+  },
+  {
+    "civilian": "Comet",
+    "undercover": "Meteor"
+  },
+  {
+    "civilian": "Galaxy",
+    "undercover": "Universe"
+  },
+  {
+    "civilian": "Cave",
+    "undercover": "Mine"
+  },
+  {
+    "civilian": "Cliff",
+    "undercover": "Peak"
+  },
+  {
+    "civilian": "Island",
+    "undercover": "Peninsula"
+  },
+  {
+    "civilian": "Volcano",
+    "undercover": "Mountain"
+  },
+  {
+    "civilian": "Swamp",
+    "undercover": "Marsh"
+  },
+  {
+    "civilian": "Sand",
+    "undercover": "Dust"
+  },
+  {
+    "civilian": "Clay",
+    "undercover": "Mud"
+  },
+  {
+    "civilian": "Rock",
+    "undercover": "Stone"
+  },
+  {
+    "civilian": "Gold",
+    "undercover": "Platinum"
+  },
+  {
+    "civilian": "Diamond",
+    "undercover": "Ruby"
+  },
+  {
+    "civilian": "Cotton",
+    "undercover": "Silk"
+  },
+  {
+    "civilian": "Leather",
+    "undercover": "Suede"
+  },
+  {
+    "civilian": "Plastic",
+    "undercover": "Rubber"
+  },
+  {
+    "civilian": "Glass",
+    "undercover": "Crystal"
+  },
+  {
+    "civilian": "Wood",
+    "undercover": "Bamboo"
+  },
+  {
+    "civilian": "Paper",
+    "undercover": "Cardboard"
+  },
+  {
+    "civilian": "String",
+    "undercover": "Rope"
+  },
+  {
+    "civilian": "Wire",
+    "undercover": "Cable"
+  },
+  {
+    "civilian": "Helmet",
+    "undercover": "Hat"
+  },
+  {
+    "civilian": "Castle",
+    "undercover": "Palace"
+  },
+  {
+    "civilian": "King",
+    "undercover": "Emperor"
+  },
+  {
+    "civilian": "Queen",
+    "undercover": "Princess"
+  },
+  {
+    "civilian": "Knight",
+    "undercover": "Soldier"
+  },
+  {
+    "civilian": "Wizard",
+    "undercover": "Witch"
+  },
+  {
+    "civilian": "Ghost",
+    "undercover": "Zombie"
+  },
+  {
+    "civilian": "Vampire",
+    "undercover": "Werewolf"
+  },
+  {
+    "civilian": "Angel",
+    "undercover": "Demon"
+  },
+  {
+    "civilian": "Heaven",
+    "undercover": "Hell"
+  },
+  {
+    "civilian": "Fire",
+    "undercover": "Ice"
+  },
+  {
+    "civilian": "Earth",
+    "undercover": "Mars"
+  },
+  {
+    "civilian": "Spring",
+    "undercover": "Autumn"
+  },
+  {
+    "civilian": "Summer",
+    "undercover": "Winter"
+  },
+  {
+    "civilian": "Morning",
+    "undercover": "Evening"
+  },
+  {
+    "civilian": "Monday",
+    "undercover": "Friday"
+  },
+  {
+    "civilian": "January",
+    "undercover": "December"
+  },
+  {
+    "civilian": "Math",
+    "undercover": "Science"
+  },
+  {
+    "civilian": "History",
+    "undercover": "Geography"
+  },
+  {
+    "civilian": "Art",
+    "undercover": "Music"
+  },
+  {
+    "civilian": "Teacher",
+    "undercover": "Professor"
+  },
+  {
+    "civilian": "Student",
+    "undercover": "Pupil"
+  },
+  {
+    "civilian": "Doctor",
+    "undercover": "Nurse"
+  },
+  {
+    "civilian": "Police",
+    "undercover": "Detective"
+  },
+  {
+    "civilian": "Chef",
+    "undercover": "Baker"
+  },
+  {
+    "civilian": "Actor",
+    "undercover": "Singer"
+  },
+  {
+    "civilian": "Writer",
+    "undercover": "Poet"
+  },
+  {
+    "civilian": "Painter",
+    "undercover": "Sculptor"
+  },
+  {
+    "civilian": "Farmer",
+    "undercover": "Gardener"
+  },
+  {
+    "civilian": "Driver",
+    "undercover": "Pilot"
+  },
+  {
+    "civilian": "Sailor",
+    "undercover": "Captain"
+  },
+  {
+    "civilian": "Train",
+    "undercover": "Tram"
+  },
+  {
+    "civilian": "Bus",
+    "undercover": "Coach"
+  },
+  {
+    "civilian": "Taxi",
+    "undercover": "Uber"
+  },
+  {
+    "civilian": "Ticket",
+    "undercover": "Pass"
+  },
+  {
+    "civilian": "Map",
+    "undercover": "Compass"
+  },
+  {
+    "civilian": "Luggage",
+    "undercover": "Backpack"
+  },
+  {
+    "civilian": "Hotel",
+    "undercover": "Motel"
+  },
+  {
+    "civilian": "Restaurant",
+    "undercover": "Cafe"
+  },
+  {
+    "civilian": "Menu",
+    "undercover": "Recipe"
+  },
+  {
+    "civilian": "Fork",
+    "undercover": "Spoon"
+  },
+  {
+    "civilian": "Plate",
+    "undercover": "Bowl"
+  },
+  {
+    "civilian": "Pot",
+    "undercover": "Pan"
+  },
+  {
+    "civilian": "Oven",
+    "undercover": "Microwave"
+  },
+  {
+    "civilian": "Fridge",
+    "undercover": "Freezer"
+  },
+  {
+    "civilian": "Broom",
+    "undercover": "Mop"
+  },
+  {
+    "civilian": "Trash",
+    "undercover": "Garbage"
+  },
+  {
+    "civilian": "Dust",
+    "undercover": "Dirt"
+  },
+  {
+    "civilian": "Soap",
+    "undercover": "Detergent"
+  },
+  {
+    "civilian": "Washing",
+    "undercover": "Cleaning"
+  },
+  {
+    "civilian": "Iron",
+    "undercover": "Steamer"
+  },
+  {
+    "civilian": "Needle",
+    "undercover": "Thread"
+  },
+  {
+    "civilian": "Dog",
+    "undercover": "Wolf"
+  },
+  {
+    "civilian": "Cat",
+    "undercover": "Tiger"
+  },
+  {
+    "civilian": "Dolphin",
+    "undercover": "Whale"
+  },
+  {
+    "civilian": "Crocodile",
+    "undercover": "Alligator"
+  },
+  {
+    "civilian": "Frog",
+    "undercover": "Toad"
+  },
+  {
+    "civilian": "Bee",
+    "undercover": "Wasp"
+  },
+  {
+    "civilian": "Butterfly",
+    "undercover": "Moth"
+  },
+  {
+    "civilian": "Rabbit",
+    "undercover": "Hare"
+  },
+  {
+    "civilian": "Rat",
+    "undercover": "Mouse"
+  },
+  {
+    "civilian": "Penguin",
+    "undercover": "Ostrich"
+  },
+  {
+    "civilian": "Apple",
+    "undercover": "Pear"
+  },
+  {
+    "civilian": "Peach",
+    "undercover": "Plum"
+  },
+  {
+    "civilian": "Coffee",
+    "undercover": "Tea"
+  },
+  {
+    "civilian": "Coke",
+    "undercover": "Pepsi"
+  },
+  {
+    "civilian": "Burger",
+    "undercover": "Sandwich"
+  },
+  {
+    "civilian": "Pizza",
+    "undercover": "Pie"
+  },
+  {
+    "civilian": "Butter",
+    "undercover": "Cheese"
+  },
+  {
+    "civilian": "Milk",
+    "undercover": "Yogurt"
+  },
+  {
+    "civilian": "Onion",
+    "undercover": "Garlic"
+  },
+  {
+    "civilian": "Tomato",
+    "undercover": "Potato"
+  },
+  {
+    "civilian": "Smartphone",
+    "undercover": "Tablet"
+  },
+  {
+    "civilian": "Laptop",
+    "undercover": "Desktop"
+  },
+  {
+    "civilian": "Pen",
+    "undercover": "Pencil"
+  },
+  {
+    "civilian": "Notebook",
+    "undercover": "Diary"
+  },
+  {
+    "civilian": "Clock",
+    "undercover": "Watch"
+  },
+  {
+    "civilian": "Glasses",
+    "undercover": "Contacts"
+  },
+  {
+    "civilian": "Guitar",
+    "undercover": "Violin"
+  },
+  {
+    "civilian": "Piano",
+    "undercover": "Keyboard"
+  },
+  {
+    "civilian": "Sofa",
+    "undercover": "Chair"
+  },
+  {
+    "civilian": "Carpet",
+    "undercover": "Rug"
+  },
+  {
+    "civilian": "Car",
+    "undercover": "Truck"
+  },
+  {
+    "civilian": "Motorcycle",
+    "undercover": "Bicycle"
+  },
+  {
+    "civilian": "Airplane",
+    "undercover": "Helicopter"
+  },
+  {
+    "civilian": "Boat",
+    "undercover": "Ship"
+  },
+  {
+    "civilian": "Train",
+    "undercover": "Subway"
+  },
+  {
+    "civilian": "River",
+    "undercover": "Lake"
+  },
+  {
+    "civilian": "Ocean",
+    "undercover": "Sea"
+  },
+  {
+    "civilian": "Mountain",
+    "undercover": "Hill"
+  },
+  {
+    "civilian": "Forest",
+    "undercover": "Jungle"
+  },
+  {
+    "civilian": "Village",
+    "undercover": "City"
+  },
+  {
+    "civilian": "Eye",
+    "undercover": "Ear"
+  },
+  {
+    "civilian": "Hand",
+    "undercover": "Foot"
+  },
+  {
+    "civilian": "Shirt",
+    "undercover": "Sweater"
+  },
+  {
+    "civilian": "Jacket",
+    "undercover": "Coat"
+  },
+  {
+    "civilian": "Shoes",
+    "undercover": "Boots"
+  },
+  {
+    "civilian": "Hat",
+    "undercover": "Cap"
+  },
+  {
+    "civilian": "Socks",
+    "undercover": "Gloves"
+  },
+  {
+    "civilian": "Scarf",
+    "undercover": "Tie"
+  },
+  {
+    "civilian": "Necklace",
+    "undercover": "Bracelet"
+  },
+  {
+    "civilian": "Ring",
+    "undercover": "Earring"
+  },
+  {
+    "civilian": "Camera",
+    "undercover": "Webcam"
+  },
+  {
+    "civilian": "Speaker",
+    "undercover": "Microphone"
+  },
+  {
+    "civilian": "Wallet",
+    "undercover": "Purse"
+  },
+  {
+    "civilian": "Mirror",
+    "undercover": "Window"
+  },
+  {
+    "civilian": "Toothbrush",
+    "undercover": "Toothpaste"
+  },
+  {
+    "civilian": "Shower",
+    "undercover": "Bath"
+  },
+  {
+    "civilian": "Toilet",
+    "undercover": "Sink"
+  },
+  {
+    "civilian": "Lamp",
+    "undercover": "Flashlight"
+  },
+  {
+    "civilian": "Battery",
+    "undercover": "Charger"
+  },
+  {
+    "civilian": "Fan",
+    "undercover": "Heater"
+  },
+  {
+    "civilian": "Pillow",
+    "undercover": "Cushion"
+  },
+  {
+    "civilian": "Table",
+    "undercover": "Desk"
+  },
+  {
+    "civilian": "Ladder",
+    "undercover": "Stairs"
+  },
+  {
+    "civilian": "Fence",
+    "undercover": "Wall"
+  },
+  {
+    "civilian": "Pool",
+    "undercover": "Pond"
+  },
+  {
+    "civilian": "Gym",
+    "undercover": "Spa"
+  },
+  {
+    "civilian": "Zoo",
+    "undercover": "Aquarium"
+  },
+  {
+    "civilian": "Farm",
+    "undercover": "Ranch"
+  },
+  {
+    "civilian": "Market",
+    "undercover": "Supermarket"
+  },
+  {
+    "civilian": "Bank",
+    "undercover": "ATM"
+  },
+  {
+    "civilian": "Post office",
+    "undercover": "Mailbox"
+  },
+  {
+    "civilian": "Gym",
+    "undercover": "Stadium"
+  },
+  {
+    "civilian": "Casino",
+    "undercover": "Lottery"
+  },
+  {
+    "civilian": "Radio",
+    "undercover": "Podcast"
+  },
+  {
+    "civilian": "Newspaper",
+    "undercover": "Magazine"
+  },
+  {
+    "civilian": "Painting",
+    "undercover": "Photo"
+  },
+  {
+    "civilian": "Statue",
+    "undercover": "Mural"
+  },
+  {
+    "civilian": "Skateboard",
+    "undercover": "Surfboard"
+  },
+  {
+    "civilian": "Bowling",
+    "undercover": "Billiards"
+  },
+  {
+    "civilian": "Fishing",
+    "undercover": "Hunting"
+  },
+  {
+    "civilian": "Camping",
+    "undercover": "Hiking"
+  },
+  {
+    "civilian": "Travel",
+    "undercover": "Vacation"
+  },
+  {
+    "civilian": "Train",
+    "undercover": "Bus"
+  },
+  {
+    "civilian": "Ship",
+    "undercover": "Cruise"
+  },
+  {
+    "civilian": "Hotel",
+    "undercover": "Resort"
+  },
+  {
+    "civilian": "Mountain",
+    "undercover": "Valley"
+  },
+  {
+    "civilian": "Beach",
+    "undercover": "Island"
+  },
+  {
+    "civilian": "Winter",
+    "undercover": "Autumn"
+  },
+  {
+    "civilian": "Spring",
+    "undercover": "Summer"
+  },
+  {
+    "civilian": "Rainy",
+    "undercover": "Cloudy"
+  },
+  {
+    "civilian": "Hot",
+    "undercover": "Warm"
+  },
+  {
+    "civilian": "Cold",
+    "undercover": "Cool"
+  },
+  {
+    "civilian": "Big",
+    "undercover": "Huge"
+  },
+  {
+    "civilian": "Small",
+    "undercover": "Tiny"
+  },
+  {
+    "civilian": "Fast",
+    "undercover": "Quick"
+  },
+  {
+    "civilian": "Slow",
+    "undercover": "Lazy"
+  },
+  {
+    "civilian": "Strong",
+    "undercover": "Tough"
+  },
+  {
+    "civilian": "Weak",
+    "undercover": "Delicate"
+  },
+  {
+    "civilian": "Rich",
+    "undercover": "Wealthy"
+  },
+  {
+    "civilian": "Poor",
+    "undercover": "Broke"
+  },
+  {
+    "civilian": "Happy",
+    "undercover": "Joyful"
+  },
+  {
+    "civilian": "Sad",
+    "undercover": "Depressed"
+  },
+  {
+    "civilian": "Angry",
+    "undercover": "Furious"
+  },
+  {
+    "civilian": "Calm",
+    "undercover": "Peaceful"
+  },
+  {
+    "civilian": "Smart",
+    "undercover": "Clever"
+  },
+  {
+    "civilian": "Dumb",
+    "undercover": "Stupid"
+  },
+  {
+    "civilian": "Funny",
+    "undercover": "Hilarious"
+  },
+  {
+    "civilian": "Boring",
+    "undercover": "Dull"
+  },
+  {
+    "civilian": "Exciting",
+    "undercover": "Thrilling"
+  },
+  {
+    "civilian": "Easy",
+    "undercover": "Simple"
+  },
+  {
+    "civilian": "Hard",
+    "undercover": "Difficult"
+  },
+  {
+    "civilian": "Young",
+    "undercover": "Teen"
+  },
+  {
+    "civilian": "Old",
+    "undercover": "Elder"
+  },
+  {
+    "civilian": "Baby",
+    "undercover": "Infant"
+  },
+  {
+    "civilian": "Adult",
+    "undercover": "Grownup"
+  },
+  {
+    "civilian": "Man",
+    "undercover": "Guy"
+  },
+  {
+    "civilian": "Woman",
+    "undercover": "Lady"
+  },
+  {
+    "civilian": "Boy",
+    "undercover": "Kid"
+  },
+  {
+    "civilian": "Girl",
+    "undercover": "Maid"
+  },
+  {
+    "civilian": "Rich",
+    "undercover": "Famous"
+  },
+  {
+    "civilian": "Popular",
+    "undercover": "Trendy"
+  },
+  {
+    "civilian": "Quiet",
+    "undercover": "Silent"
+  },
+  {
+    "civilian": "Loud",
+    "undercover": "Noisy"
+  },
+  {
+    "civilian": "Clean",
+    "undercover": "Neat"
+  },
+  {
+    "civilian": "Dirty",
+    "undercover": "Messy"
+  },
+  {
+    "civilian": "New",
+    "undercover": "Fresh"
+  },
+  {
+    "civilian": "Old",
+    "undercover": "Ancient"
+  },
+  {
+    "civilian": "Dark",
+    "undercover": "Black"
+  },
+  {
+    "civilian": "Bright",
+    "undercover": "Shiny"
+  },
+  {
+    "civilian": "Light",
+    "undercover": "Pale"
+  },
+  {
+    "civilian": "Heavy",
+    "undercover": "Weighty"
+  },
+  {
+    "civilian": "Soft",
+    "undercover": "Gentle"
+  },
+  {
+    "civilian": "Hard",
+    "undercover": "Rough"
+  },
+  {
+    "civilian": "Wet",
+    "undercover": "Damp"
+  },
+  {
+    "civilian": "Dry",
+    "undercover": "Arid"
+  },
+  {
+    "civilian": "Full",
+    "undercover": "Satisfied"
+  },
+  {
+    "civilian": "Empty",
+    "undercover": "Blank"
+  },
+  {
+    "civilian": "Open",
+    "undercover": "Unlock"
+  },
+  {
+    "civilian": "Close",
+    "undercover": "Shut"
+  },
+  {
+    "civilian": "Start",
+    "undercover": "Begin"
+  },
+  {
+    "civilian": "End",
+    "undercover": "Finish"
+  },
+  {
+    "civilian": "Win",
+    "undercover": "Victory"
+  },
+  {
+    "civilian": "Lose",
+    "undercover": "Defeat"
+  },
+  {
+    "civilian": "Give",
+    "undercover": "Take"
+  },
+  {
+    "civilian": "Buy",
+    "undercover": "Sell"
+  },
+  {
+    "civilian": "Ask",
+    "undercover": "Answer"
+  },
+  {
+    "civilian": "Come",
+    "undercover": "Go"
+  },
+  {
+    "civilian": "Stay",
+    "undercover": "Leave"
+  },
+  {
+    "civilian": "Work",
+    "undercover": "Job"
+  },
+  {
+    "civilian": "Rest",
+    "undercover": "Relax"
+  },
+  {
+    "civilian": "Play",
+    "undercover": "Fun"
+  },
+  {
+    "civilian": "Study",
+    "undercover": "Learn"
+  },
+  {
+    "civilian": "Teach",
+    "undercover": "Train"
+  },
+  {
+    "civilian": "Cook",
+    "undercover": "Bake"
+  },
+  {
+    "civilian": "Build",
+    "undercover": "Make"
+  },
+  {
+    "civilian": "Fix",
+    "undercover": "Repair"
+  },
+  {
+    "civilian": "Break",
+    "undercover": "Smash"
+  },
+  {
+    "civilian": "Save",
+    "undercover": "Rescue"
+  },
+  {
+    "civilian": "Help",
+    "undercover": "Assist"
+  },
+  {
+    "civilian": "Stop",
+    "undercover": "Halt"
+  },
+  {
+    "civilian": "Start",
+    "undercover": "Launch"
+  },
+  {
+    "civilian": "Hide",
+    "undercover": "Cover"
+  },
+  {
+    "civilian": "Find",
+    "undercover": "Discover"
+  },
+  {
+    "civilian": "Lose",
+    "undercover": "Miss"
+  },
+  {
+    "civilian": "Remember",
+    "undercover": "Recall"
+  },
+  {
+    "civilian": "Forget",
+    "undercover": "Ignore"
+  },
+  {
+    "civilian": "Love",
+    "undercover": "Adore"
+  },
+  {
+    "civilian": "Hate",
+    "undercover": "Despise"
+  },
+  {
+    "civilian": "Trust",
+    "undercover": "Believe"
+  },
+  {
+    "civilian": "Doubt",
+    "undercover": "Suspect"
+  },
+  {
+    "civilian": "Safe",
+    "undercover": "Secure"
+  },
+  {
+    "civilian": "Danger",
+    "undercover": "Risk"
+  },
+  {
+    "civilian": "Free",
+    "undercover": "Open"
+  },
+  {
+    "civilian": "Busy",
+    "undercover": "Occupied"
+  },
+  {
+    "civilian": "Careful",
+    "undercover": "Cautious"
+  },
+  {
+    "civilian": "Careless",
+    "undercover": "Reckless"
+  },
+  {
+    "civilian": "Kind",
+    "undercover": "Nice"
+  },
+  {
+    "civilian": "Cruel",
+    "undercover": "Mean"
+  },
+  {
+    "civilian": "Brave",
+    "undercover": "Courageous"
+  },
+  {
+    "civilian": "Scared",
+    "undercover": "Afraid"
+  },
+  {
+    "civilian": "Honest",
+    "undercover": "Sincere"
+  },
+  {
+    "civilian": "Fake",
+    "undercover": "Counterfeit"
+  },
+  {
+    "civilian": "Real",
+    "undercover": "Authentic"
+  },
+  {
+    "civilian": "Perfect",
+    "undercover": "Flawless"
+  },
+  {
+    "civilian": "Imperfect",
+    "undercover": "Flawed"
+  },
+  {
+    "civilian": "Success",
+    "undercover": "Achievement"
+  },
+  {
+    "civilian": "Failure",
+    "undercover": "Mistake"
+  },
+  {
+    "civilian": "Profit",
+    "undercover": "Gain"
+  },
+  {
+    "civilian": "Loss",
+    "undercover": "Debt"
+  },
+  {
+    "civilian": "Speed",
+    "undercover": "Velocity"
+  },
+  {
+    "civilian": "Distance",
+    "undercover": "Range"
+  },
+  {
+    "civilian": "Height",
+    "undercover": "Altitude"
+  },
+  {
+    "civilian": "Depth",
+    "undercover": "Abyss"
+  },
+  {
+    "civilian": "Weight",
+    "undercover": "Mass"
+  },
+  {
+    "civilian": "Volume",
+    "undercover": "Capacity"
+  },
+  {
+    "civilian": "Temperature",
+    "undercover": "Heat"
+  },
+  {
+    "civilian": "Pressure",
+    "undercover": "Stress"
+  },
+  {
+    "civilian": "Sound",
+    "undercover": "Noise"
+  },
+  {
+    "civilian": "Light",
+    "undercover": "Beam"
+  },
+  {
+    "civilian": "Shadow",
+    "undercover": "Darkness"
+  },
+  {
+    "civilian": "Color",
+    "undercover": "Hue"
+  },
+  {
+    "civilian": "Shape",
+    "undercover": "Form"
+  },
+  {
+    "civilian": "Size",
+    "undercover": "Scale"
+  },
+  {
+    "civilian": "Style",
+    "undercover": "Fashion"
+  },
+  {
+    "civilian": "Taste",
+    "undercover": "Flavor"
+  },
+  {
+    "civilian": "Smell",
+    "undercover": "Odor"
+  },
+  {
+    "civilian": "Texture",
+    "undercover": "Surface"
+  },
+  {
+    "civilian": "Quality",
+    "undercover": "Grade"
+  },
+  {
+    "civilian": "Price",
+    "undercover": "Cost"
+  },
+  {
+    "civilian": "Value",
+    "undercover": "Worth"
+  },
+  {
+    "civilian": "Offer",
+    "undercover": "Deal"
+  },
+  {
+    "civilian": "Order",
+    "undercover": "Command"
+  },
+  {
+    "civilian": "Request",
+    "undercover": "Demand"
+  },
+  {
+    "civilian": "Promise",
+    "undercover": "Oath"
+  },
+  {
+    "civilian": "Secret",
+    "undercover": "Mystery"
+  },
+  {
+    "civilian": "Truth",
+    "undercover": "Reality"
+  },
+  {
+    "civilian": "Story",
+    "undercover": "Tale"
+  },
+  {
+    "civilian": "Joke",
+    "undercover": "Prank"
+  },
+  {
+    "civilian": "Game",
+    "undercover": "Match"
+  },
+  {
+    "civilian": "Toy",
+    "undercover": "Gift"
+  },
+  {
+    "civilian": "Tool",
+    "undercover": "Device"
+  },
+  {
+    "civilian": "Machine",
+    "undercover": "Engine"
+  },
+  {
+    "civilian": "Robot",
+    "undercover": "Drone"
+  },
+  {
+    "civilian": "AI",
+    "undercover": "Bot"
+  },
+  {
+    "civilian": "Code",
+    "undercover": "Script"
+  },
+  {
+    "civilian": "Data",
+    "undercover": "Info"
+  },
+  {
+    "civilian": "File",
+    "undercover": "Folder"
+  },
+  {
+    "civilian": "Link",
+    "undercover": "URL"
+  },
+  {
+    "civilian": "Post",
+    "undercover": "Article"
+  },
+  {
+    "civilian": "Chat",
+    "undercover": "Message"
+  },
+  {
+    "civilian": "Call",
+    "undercover": "Ring"
+  },
+  {
+    "civilian": "Video",
+    "undercover": "Movie"
+  },
+  {
+    "civilian": "Photo",
+    "undercover": "Image"
+  },
+  {
+    "civilian": "Music",
+    "undercover": "Song"
+  },
+  {
+    "civilian": "Dance",
+    "undercover": "Move"
+  },
+  {
+    "civilian": "Art",
+    "undercover": "Design"
+  },
+  {
+    "civilian": "Write",
+    "undercover": "Type"
+  },
+  {
+    "civilian": "Draw",
+    "undercover": "Sketch"
+  },
+  {
+    "civilian": "Paint",
+    "undercover": "Color"
+  },
+  {
+    "civilian": "Cook",
+    "undercover": "Grill"
+  },
+  {
+    "civilian": "Plant",
+    "undercover": "Grow"
+  },
+  {
+    "civilian": "Clean",
+    "undercover": "Wash"
+  },
+  {
+    "civilian": "Fix",
+    "undercover": "Mend"
+  },
+  {
+    "civilian": "Build",
+    "undercover": "Construct"
+  },
+  {
+    "civilian": "Break",
+    "undercover": "Crack"
+  },
+  {
+    "civilian": "Throw",
+    "undercover": "Toss"
+  },
+  {
+    "civilian": "Catch",
+    "undercover": "Grab"
+  },
+  {
+    "civilian": "Hold",
+    "undercover": "Grip"
+  },
+  {
+    "civilian": "Drop",
+    "undercover": "Fall"
+  },
+  {
+    "civilian": "Rise",
+    "undercover": "Climb"
+  },
+  {
+    "civilian": "Sit",
+    "undercover": "Rest"
+  },
+  {
+    "civilian": "Stand",
+    "undercover": "Rise"
+  },
+  {
+    "civilian": "Lie",
+    "undercover": "Lay"
+  },
+  {
+    "civilian": "Wake",
+    "undercover": "Rise"
+  },
+  {
+    "civilian": "Sleep",
+    "undercover": "Rest"
+  },
+  {
+    "civilian": "Dream",
+    "undercover": "Imagine"
+  },
+  {
+    "civilian": "Think",
+    "undercover": "Ponder"
+  },
+  {
+    "civilian": "Know",
+    "undercover": "Understand"
+  },
+  {
+    "civilian": "Guess",
+    "undercover": "Assume"
+  },
+  {
+    "civilian": "Learn",
+    "undercover": "Study"
+  },
+  {
+    "civilian": "Teach",
+    "undercover": "Educate"
+  },
+  {
+    "civilian": "Lead",
+    "undercover": "Guide"
+  },
+  {
+    "civilian": "Follow",
+    "undercover": "Obey"
+  },
+  {
+    "civilian": "Win",
+    "undercover": "Triumph"
+  },
+  {
+    "civilian": "Lose",
+    "undercover": "Surrender"
+  },
+  {
+    "civilian": "Fight",
+    "undercover": "Battle"
+  },
+  {
+    "civilian": "Peace",
+    "undercover": "Treaty"
+  },
+  {
+    "civilian": "War",
+    "undercover": "Conflict"
+  },
+  {
+    "civilian": "Army",
+    "undercover": "Troops"
+  },
+  {
+    "civilian": "Navy",
+    "undercover": "Marines"
+  },
+  {
+    "civilian": "Police",
+    "undercover": "Trooper"
+  },
+  {
+    "civilian": "Judge",
+    "undercover": "Jury"
+  },
+  {
+    "civilian": "Lawyer",
+    "undercover": "Attorney"
+  },
+  {
+    "civilian": "King",
+    "undercover": "Ruler"
+  },
+  {
+    "civilian": "God",
+    "undercover": "Deity"
+  },
+  {
+    "civilian": "Angel",
+    "undercover": "Spirit"
+  },
+  {
+    "civilian": "Devil",
+    "undercover": "Evil"
+  },
+  {
+    "civilian": "Hero",
+    "undercover": "Champion"
+  },
+  {
+    "civilian": "Villain",
+    "undercover": "Criminal"
+  },
+  {
+    "civilian": "Star",
+    "undercover": "Celebrity"
+  },
+  {
+    "civilian": "Fan",
+    "undercover": "Follower"
+  },
+  {
+    "civilian": "Expert",
+    "undercover": "Master"
+  },
+  {
+    "civilian": "Beginner",
+    "undercover": "Novice"
+  },
+  {
+    "civilian": "Pro",
+    "undercover": "Elite"
+  },
+  {
+    "civilian": "Amateur",
+    "undercover": "Hobbyist"
+  },
+  {
+    "civilian": "Leader",
+    "undercover": "Chief"
+  },
+  {
+    "civilian": "Follower",
+    "undercover": "Fan"
+  },
+  {
+    "civilian": "Teacher",
+    "undercover": "Tutor"
+  },
+  {
+    "civilian": "Student",
+    "undercover": "Learner"
+  },
+  {
+    "civilian": "Doctor",
+    "undercover": "Surgeon"
+  },
+  {
+    "civilian": "Nurse",
+    "undercover": "Assistant"
+  },
+  {
+    "civilian": "Teacher",
+    "undercover": "Instructor"
+  },
+  {
+    "civilian": "Student",
+    "undercover": "Graduate"
+  },
+  {
+    "civilian": "Parent",
+    "undercover": "Guardian"
+  },
+  {
+    "civilian": "Child",
+    "undercover": "Kid"
+  },
+  {
+    "civilian": "Friend",
+    "undercover": "Buddy"
+  },
+  {
+    "civilian": "Enemy",
+    "undercover": "Rival"
+  },
+  {
+    "civilian": "Boss",
+    "undercover": "Leader"
+  },
+  {
+    "civilian": "Worker",
+    "undercover": "Employee"
+  },
+  {
+    "civilian": "Owner",
+    "undercover": "Boss"
+  },
+  {
+    "civilian": "Customer",
+    "undercover": "Client"
+  },
+  {
+    "civilian": "Seller",
+    "undercover": "Vendor"
+  },
+  {
+    "civilian": "Buyer",
+    "undercover": "Shopper"
+  },
+  {
+    "civilian": "Guest",
+    "undercover": "Visitor"
+  },
+  {
+    "civilian": "Host",
+    "undercover": "Owner"
+  },
+  {
+    "civilian": "Mustard",
+    "undercover": "Horseradish"
+  },
+  {
+    "civilian": "Ketchup",
+    "undercover": "Mayo"
+  },
+  {
+    "civilian": "Salt",
+    "undercover": "Sodium"
+  },
+  {
+    "civilian": "Pepper",
+    "undercover": "Paprika"
+  },
+  {
+    "civilian": "Lemon",
+    "undercover": "Citrus"
+  },
+  {
+    "civilian": "Lime",
+    "undercover": "Acid"
+  },
+  {
+    "civilian": "Grape",
+    "undercover": "Raisin"
+  },
+  {
+    "civilian": "Berry",
+    "undercover": "Cherry"
+  },
+  {
+    "civilian": "Coconut",
+    "undercover": "Mocha"
+  },
+  {
+    "civilian": "Mushroom",
+    "undercover": "Truffle"
+  },
+  {
+    "civilian": "Cereal",
+    "undercover": "Oatmeal"
+  },
+  {
+    "civilian": "Yeast",
+    "undercover": "Dough"
+  },
+  {
+    "civilian": "Falcon",
+    "undercover": "Kestrel"
+  },
+  {
+    "civilian": "Owl",
+    "undercover": "Raven"
+  },
+  {
+    "civilian": "Parrot",
+    "undercover": "Canary"
+  },
+  {
+    "civilian": "Swan",
+    "undercover": "Goose"
+  },
+  {
+    "civilian": "Peacock",
+    "undercover": "Flamingo"
+  },
+  {
+    "civilian": "Squirrel",
+    "undercover": "Skunk"
+  },
+  {
+    "civilian": "Deer",
+    "undercover": "Bambi"
+  },
+  {
+    "civilian": "Fox",
+    "undercover": "Vixen"
+  },
+  {
+    "civilian": "Coyote",
+    "undercover": "Jackal"
+  },
+  {
+    "civilian": "Camel",
+    "undercover": "Llama"
+  },
+  {
+    "civilian": "Sheep",
+    "undercover": "Lamb"
+  },
+  {
+    "civilian": "Scorpion",
+    "undercover": "Centipede"
+  },
+  {
+    "civilian": "Coral",
+    "undercover": "Reef"
+  },
+  {
+    "civilian": "Kelp",
+    "undercover": "Seaweed"
+  },
+  {
+    "civilian": "Plankton",
+    "undercover": "Krill"
+  },
+  {
+    "civilian": "Glacier",
+    "undercover": "Iceberg"
+  },
+  {
+    "civilian": "Oasis",
+    "undercover": "Mirage"
+  },
+  {
+    "civilian": "Canyon",
+    "undercover": "Gorge"
+  },
+  {
+    "civilian": "Mist",
+    "undercover": "Haze"
+  },
+  {
+    "civilian": "Frost",
+    "undercover": "Sleet"
+  },
+  {
+    "civilian": "Orbit",
+    "undercover": "Path"
+  },
+  {
+    "civilian": "Satellite",
+    "undercover": "Probe"
+  },
+  {
+    "civilian": "Signal",
+    "undercover": "Radar"
+  },
+  {
+    "civilian": "Beacon",
+    "undercover": "Lighthouse"
+  },
+  {
+    "civilian": "Prism",
+    "undercover": "Spectrum"
+  },
+  {
+    "civilian": "Magnet",
+    "undercover": "Static"
+  },
+  {
+    "civilian": "Telescope",
+    "undercover": "Periscope"
+  },
+  {
+    "civilian": "Microscope",
+    "undercover": "Slide"
+  },
+  {
+    "civilian": "Venture",
+    "undercover": "Project"
+  },
+  {
+    "civilian": "Policy",
+    "undercover": "Protocol"
+  },
+  {
+    "civilian": "Strategy",
+    "undercover": "Tactic"
+  },
+  {
+    "civilian": "Budget",
+    "undercover": "Balance"
+  },
+  {
+    "civilian": "Audit",
+    "undercover": "Checkup"
+  },
+  {
+    "civilian": "Archive",
+    "undercover": "Backlog"
+  },
+  {
+    "civilian": "Journal",
+    "undercover": "Ledger"
+  },
+  {
+    "civilian": "Draft",
+    "undercover": "Voucher"
+  },
+  {
+    "civilian": "Patent",
+    "undercover": "License"
+  },
+  {
+    "civilian": "Copyright",
+    "undercover": "Trademark"
+  }
 ]
